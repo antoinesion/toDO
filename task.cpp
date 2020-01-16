@@ -9,19 +9,21 @@
 Task::Task (std::map<int, Task*>* id_to_ptr) : id_to_ptr(id_to_ptr) {}
 
 Task::Task (std::map<int, Task*>* id_to_ptr,
-    int id, std::string title, std::string description, int priority, int subtask_of) :
-  id_to_ptr(id_to_ptr), id(id), title(title), description(description), priority(priority) {
+    int id, std::string t, std::string d, int p, int st) :
+  id_to_ptr(id_to_ptr), id(id), title(t), description(d), priority(p), subtask_of(st) {
     (*id_to_ptr)[id] = this;
     time_t now = time(0);
     creation_date = ctime(&now);
     creation_date = creation_date.substr(0,creation_date.length()-1);
-    if (subtask_of >= 0) {
+    if (subtask_of > 0) {
       (*id_to_ptr)[subtask_of]->add_subtask(id);
+      priority = 0;
     }
 }
 
 int Task::get_id () {return id;}
 int Task::get_progression () {return progression;}
+int Task::get_priority () {return priority;}
 
 void Task::update_progression () {
   int sum = 0;
@@ -45,23 +47,38 @@ void Task::add_subtask (int subtask_id) {
 }
 
 void Task::quickview (int sub) {
-  std::string pt;
-  if (sub == 0) {
-    pt = "-";
-  } else {
-    pt = "└";
+  if (printed == false) {
+    std::string pt;
+    if (sub == 0) {
+      pt = "-";
+    } else {
+      pt = "└";
+    }
+    std::string sstatus;
+    if (status == 0) {
+      sstatus = "Not Started";
+    } else if (status == 1) {
+      sstatus = "In Progress";
+    } else {
+      sstatus = "Done";
+    }
+    std::string spriority (priority, '!');
+    if (priority == 0) {
+      spriority = "";
+    }
+    else {
+      spriority = " [" + spriority + "]";
+    }
+    std::cout << std::string((sub+1), ' ') << pt << " (id:" << id << ") "
+      << title << ": " << sstatus << " (" << std::to_string(progression) << "%)"
+      << spriority << std::endl;
+
+    printed = true;
+
+    for (int subtask_id : subtasks_id) {
+      (*id_to_ptr)[subtask_id]->quickview(sub+1);
+    }
   }
-  std::string sstatus;
-  if (status == 0) {
-    sstatus = "Not Started";
-  } else if (status == 1) {
-    sstatus = "In Progress";
-  } else {
-    sstatus = "Done";
-  }
-  std::cout << std::string((sub+1)*2, ' ') << pt << " (" << id << ") "
-    << title << ": " << sstatus << " (" << std::to_string(progression) << ')'
-    << std::endl;
 }
 
 void Task::read (std::string& stask) {
@@ -135,6 +152,9 @@ void Task::read (std::string& stask) {
   if (n > 0) {
     prgs_editable = false;
   }
+  /* subtask_of */
+  end += 2; srt = end-1;
+  subtask_of = std::stoi(stask.substr(srt,end-srt));
 }
 
 void Task::write (std::ofstream& file) {
@@ -158,5 +178,6 @@ void Task::write (std::ofstream& file) {
   for (int i = 0 ; i < n ; i++) {
     file << subtasks_id[i] << ' ';
   }
+  file << subtask_of << ' ';
   file << '"' << std::endl;
 }

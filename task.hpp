@@ -18,15 +18,17 @@ class Task {
     int priority = 0;
     std::vector<std::string> comments;
     std::vector<int> subtasks_id;
+    int subtask_of;
     std::map<int, Task*>* id_to_ptr;
     bool del = false;
+    bool printed = false;
   public:
     Task (std::map<int, Task*>* id_to_ptr);
     Task (std::map<int, Task*>* id_to_ptr,
-	int id, std::string title, std::string description = "", int priority = 0,
-	int subtask_of = -1);
+	int id, std::string t, std::string d = "", int p = 0, int st = 0);
     int get_id ();
     int get_progression ();
+    int get_priority ();
     
     void set_title (std::string& ttl);
     /* ... */
