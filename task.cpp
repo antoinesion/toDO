@@ -13,8 +13,7 @@ Task::Task (std::map<int, Task*>* id_to_ptr,
   id_to_ptr(id_to_ptr), id(id), title(t), description(d), priority(p), subtask_of(st) {
     (*id_to_ptr)[id] = this;
     time_t now = time(0);
-    creation_date = ctime(&now);
-    creation_date = creation_date.substr(0,creation_date.length()-1);
+    creation_date = now;
     if (subtask_of > 0) {
       (*id_to_ptr)[subtask_of]->add_subtask(id);
       priority = 0;
@@ -24,6 +23,9 @@ Task::Task (std::map<int, Task*>* id_to_ptr,
 int Task::get_id () {return id;}
 int Task::get_progression () {return progression;}
 int Task::get_priority () {return priority;}
+time_t Task::get_creation_date () {return creation_date;}
+int Task::get_subtask_of () {return subtask_of;}
+bool Task::get_del () {return del;}
 
 void Task::update_progression () {
   int sum = 0;
@@ -36,6 +38,7 @@ void Task::update_progression () {
   }
   else if (progression == 100) {
     status = 2;
+    closure_date = time(0);
   } else {
     status = 1;
   }
@@ -47,37 +50,87 @@ void Task::add_subtask (int subtask_id) {
 }
 
 void Task::quickview (int sub) {
-  if (printed == false) {
-    std::string pt;
-    if (sub == 0) {
-      pt = "-";
-    } else {
-      pt = "└";
-    }
-    std::string sstatus;
-    if (status == 0) {
-      sstatus = "Not Started";
-    } else if (status == 1) {
-      sstatus = "In Progress";
-    } else {
-      sstatus = "Done";
-    }
-    std::string spriority (priority, '!');
-    if (priority == 0) {
-      spriority = "";
-    }
-    else {
-      spriority = " [" + spriority + "]";
-    }
-    std::cout << std::string((sub+1), ' ') << pt << " (id:" << id << ") "
-      << title << ": " << sstatus << " (" << std::to_string(progression) << "%)"
-      << spriority << std::endl;
+  std::string pt;
+  if (sub == 0) {
+    pt = "-";
+  } else {
+    pt = "└";
+  }
+  std::string sprogr;
+  if (status == 0) {
+    sprogr = "Not Started";
+  } else if (status == 1) {
+    sprogr = "In Progress (" + std::to_string(progression) + "%)";
+  } else {
+    std::string scl_dt (ctime(&closure_date));
+    sprogr = "Done (" + scl_dt.substr(0,scl_dt.length()-1) + ")";
+  }
+  std::string spriority (priority, '!');
+  if (priority == 0) {
+    spriority = "";
+  }
+  else {
+    spriority = " [" + spriority + "]";
+  }
+  std::cout << std::string((sub+1), ' ') << pt << " (id:" << id << ") "
+    << title << ": " << sprogr << ' ' << spriority << std::endl;
 
-    printed = true;
+  for (int subtask_id : subtasks_id) {
+    (*id_to_ptr)[subtask_id]->quickview(sub+1);
+  }
+}
 
+void Task::print () {
+  std::string sprogr;
+  if (status == 0) {
+    sprogr = "Not Started";
+  } else if (status == 1) {
+    sprogr = "In Progress (" + std::to_string(progression) + "%)";
+  } else {
+    std::string scl_dt (ctime(&closure_date));
+    sprogr = "Done (" + scl_dt.substr(0,scl_dt.length()-1) + ")";
+  }
+  std::string spriority (priority, '!');
+  if (priority == 0) {
+    spriority = "";
+  }
+  else {
+    spriority = " [" + spriority + "]";
+  }
+  std::string space (56 - sprogr.length() - (priority > 0) - spriority.length(), ' ');
+  if (title.length()%2 == 1) {
+    space = space.substr(0,space.length()-1);
+  }
+  std::string scr_dt = ctime(&creation_date);
+  std::cout << std::endl << scr_dt.substr(0,scr_dt.length()-1)
+    << space << sprogr << ' ' << spriority << std::endl;
+  int nsep = (78 - title.length()) / 2;
+  std::string sep (nsep, '*');
+  std::cout << sep << ' ' << title << ' ' <<  sep << std::endl << std::endl;
+  if (description != "") {
+    std::cout << description << std::endl << std::endl;
+  }
+  else {
+    std::cout << "no description." << std::endl << std::endl;
+  }
+  if (comments.size() != 0) {
+    std::cout << "comment(s):" << std::endl;
+    for (std::string com : comments) {
+      std::cout << " - " << com << std::endl;
+    }
+    std::cout << std::endl;
+  }
+  else {
+    std::cout << "no comment." << std::endl << std::endl;
+  }
+  if (subtasks_id.size() != 0) {
+    std::cout << "subtask(s):" << std::endl;
     for (int subtask_id : subtasks_id) {
-      (*id_to_ptr)[subtask_id]->quickview(sub+1);
+      (*id_to_ptr)[subtask_id]->quickview(0);
     }
+  }
+  else {
+    std::cout << "no subtask." << std::endl;
   }
 }
 
@@ -105,21 +158,21 @@ void Task::read (std::string& stask) {
   end += 3; srt = end-1;
   status = std::stoi(stask.substr(srt,end-srt));
   /* creation_date */
-  end += 2; srt = end; 
-  while (stask[end] != '"') {
+  end += 1; srt = end; 
+  while (stask[end] != ' ') {
     end++;
   }
-  creation_date = stask.substr(srt,end-srt);
+  creation_date = std::stoi(stask.substr(srt,end-srt));
   /* closure_date */
   if (status == 2) {
-    end += 3; srt = end;
-    while (stask[end] != '"') {
+    end += 1; srt = end;
+    while (stask[end] != ' ') {
       end++;
     }
-    closure_date = stask.substr(srt,end-srt);
+    closure_date = std::stoi(stask.substr(srt,end-srt));
   }
   /* progression */
-  end += 2; srt = end;
+  end += 1; srt = end;
   while (stask[end] != ' ') {
     end++;
   }
@@ -162,9 +215,9 @@ void Task::write (std::ofstream& file) {
   file << '"' << title << '"' << ' ';
   file << '"' << description << '"' << ' ';
   file << status << ' ';
-  file << '"' << creation_date << '"' << ' ';
+  file  << creation_date << ' ';
   if (status == 2) {
-    file << '"' << closure_date << '"' << ' ';
+    file << closure_date << ' ';
   }
   file << progression << ' ';
   file << priority << ' ';

@@ -4,6 +4,7 @@
 #include <vector>
 #include <fstream>
 #include <map>
+#include <ctime>
 
 class Task {
   private:
@@ -11,8 +12,8 @@ class Task {
     std::string title;
     std::string description = "No description";
     int status = 0;
-    std::string creation_date = "-";
-    std::string closure_date;
+    time_t creation_date;
+    time_t closure_date;
     int progression = 0;
     bool prgs_editable = true;
     int priority = 0;
@@ -21,14 +22,17 @@ class Task {
     int subtask_of;
     std::map<int, Task*>* id_to_ptr;
     bool del = false;
-    bool printed = false;
   public:
     Task (std::map<int, Task*>* id_to_ptr);
     Task (std::map<int, Task*>* id_to_ptr,
 	int id, std::string t, std::string d = "", int p = 0, int st = 0);
+
     int get_id ();
     int get_progression ();
     int get_priority ();
+    time_t get_creation_date ();
+    int get_subtask_of ();
+    bool get_del ();
     
     void set_title (std::string& ttl);
     /* ... */
