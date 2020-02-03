@@ -1,10 +1,4 @@
 #include "task.hpp"
-#include <iostream>
-#include <string>
-#include <vector>
-#include <fstream>
-#include <map>
-#include <ctime>
 
 Task::Task (std::map<int, Task*>* id_to_ptr) : id_to_ptr(id_to_ptr) {}
 
@@ -47,6 +41,38 @@ void Task::update_progression () {
 void Task::add_subtask (int subtask_id) {
   subtasks_id.push_back(subtask_id);
   this->update_progression();
+}
+
+int Task::close (bool force) {
+  if (subtasks_id.size () == 0 && status != 2) {
+    status = 2;
+    progression = 100;
+    time_t now = time(0);
+    closure_date = now;
+    return 1;
+  }
+  else if (subtasks_id.size () > 0 && status != 2) {
+    if (!force) {
+      std::cout << "(id:" << id << ") " << title << " has subtask(s)." << std::endl
+	<< "Closing it will also close all those subtask(s)." << std::endl
+	<< "Do you still want to proceed? [y/n] ";
+      char choice;
+      std::cin >> choice;
+      if (choice == 'y') { force = true; }
+    }
+    if (force) {
+      int nb_tasks_closed = 0;
+      for (int subtask_id : subtasks_id) {
+	nb_tasks_closed += (*id_to_ptr)[subtask_id]->close(true);
+      }
+      status = 2;
+      progression = 100;
+      time_t now = time(0);
+      closure_date = now;
+      return nb_tasks_closed + 1;
+    }
+  }
+  return 0;
 }
 
 void Task::quickview (int sub) {
@@ -106,7 +132,7 @@ void Task::print () {
     << space << sprogr << ' ' << spriority << std::endl;
   int nsep = (78 - title.length()) / 2;
   std::string sep (nsep, '*');
-  std::cout << sep << ' ' << title << ' ' <<  sep << std::endl << std::endl;
+  std::cout << sep << ' ' << title << ' ' <<  sep << std::endl;
   if (description != "") {
     std::cout << description << std::endl << std::endl;
   }

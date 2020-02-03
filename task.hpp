@@ -5,6 +5,8 @@
 #include <fstream>
 #include <map>
 #include <ctime>
+#include <iostream>
+#include <string>
 
 class Task {
   private:
@@ -40,6 +42,7 @@ class Task {
     void add_comment (std::string& cmt);
     void update_progression ();
     void add_subtask (int subtask_id);
+    int close (bool force);
     
     void quickview (int sub);
     void print ();
