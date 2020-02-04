@@ -1,8 +1,8 @@
-#include "task.hpp"
-#include "actions/create.hpp"
-#include "actions/list.hpp"
-#include "actions/show.hpp"
-#include "actions/close.hpp"
+#include "../includes/task.hpp"
+#include "../includes/create.hpp"
+#include "../includes/list.hpp"
+#include "../includes/show.hpp"
+#include "../includes/close.hpp"
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -30,9 +30,11 @@ std::vector<Task*> read_tasks (std::ifstream& file) {
   return tasks;
 };
 
+const std::string file_path = "../etc/tasks.txt";
+
 int main (int argc, char* argv []) {
   /* --- READING TASKS --- */
-  std::ifstream ifile ("tasks_backup.txt");
+  std::ifstream ifile (file_path);
   std::vector<Task*> tasks;
   
   int next_id = 1;
@@ -81,7 +83,7 @@ int main (int argc, char* argv []) {
   std::cout << std::endl << std::endl;
 
   /* --- SAVING TASKS --- */
-  std::ofstream ofile ("tasks_backup.txt");
+  std::ofstream ofile (file_path);
   ofile << next_id << std::endl;
   for (Task* tsk : tasks) {
     tsk->write (ofile);

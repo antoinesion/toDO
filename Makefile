@@ -1,7 +1,7 @@
 CXX=g++
 CXXFLAGS=-std=c++11
-EXE=toDO
-OBJS=task.o actions/create.o actions/list.o actions/show.o actions/close.o main.o
+EXE=bin/todo
+OBJS=$(patsubst %.cpp,%.o,$(wildcard src/*.cpp))
 
 all: $(EXE)
 

@@ -1,6 +1,6 @@
 #ifndef LIST_H
 #define LIST_H
-#include "../task.hpp"
+#include "task.hpp"
 #include <vector>
 #include <iostream>
 #include <string>
