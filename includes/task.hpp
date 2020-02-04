@@ -12,8 +12,8 @@ class Task {
   private:
     int id;
     std::string title;
-    std::string description = "No description";
-    int status = 0;
+    std::string description;
+    int state = 0;
     time_t creation_date;
     time_t closure_date;
     int progression = 0;
@@ -26,25 +26,28 @@ class Task {
     bool del = false;
   public:
     Task (std::map<int, Task*>* id_to_ptr);
-    Task (std::map<int, Task*>* id_to_ptr,
-	int id, std::string t, std::string d = "", int p = 0, int st = 0);
+    Task (std::map<int, Task*>* id_to_ptr, int id);
 
     int get_id ();
+    int get_state ();
     int get_progression ();
     int get_priority ();
     time_t get_creation_date ();
     int get_subtask_of ();
     bool get_del ();
-    
-    void set_title (std::string& ttl);
+
+    void set_title (std::string& t);
+    void set_description (std::string& d);
+    void set_priority (int p);
+    void set_subtask_of (int sto);
     /* ... */
-    
+
     void add_comment (std::string& cmt);
     void update_progression ();
     void add_subtask (int subtask_id);
-    int close (bool force);
-    
-    void quickview (int sub);
+    int close ();
+
+    int quickview (int sub);
     void print ();
 
     void read (std::string& stask);

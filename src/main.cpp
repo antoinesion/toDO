@@ -56,7 +56,11 @@ int main (int argc, char* argv []) {
   }
   else {
     if (std::strcmp(argv[1], "create") == 0) {
-      create_task (&tasks, id_to_ptr, &next_id, argc, argv);
+      Task new_task = Task(&id_to_ptr, next_id);
+      if (create_task (&new_task, id_to_ptr, argc, argv)) {
+	tasks.push_back(&new_task);
+	next_id++;
+      }
     }
     else if (std::strcmp(argv[1], "list") == 0) {
       list_tasks (tasks, argc, argv);

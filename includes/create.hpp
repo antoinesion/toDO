@@ -6,7 +6,6 @@
 #include <string>
 #include "task.hpp"
 
-void create_task (std::vector<Task*>* tasks, std::map<int, Task*>& id_to_ptr,
-    int*next_id, int argc, char* argv []);
+bool create_task (Task* new_task, std::map<int, Task*>& id_to_ptr, int argc, char* argv []);
 
 #endif

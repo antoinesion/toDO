@@ -1,7 +1,6 @@
 #include "../includes/create.hpp"
 
-void create_task (std::vector<Task*>* tasks, std::map<int, Task*>& id_to_ptr,
-    int* next_id, int argc, char* argv []) {
+bool create_task (Task* new_task, std::map<int, Task*>& id_to_ptr, int argc, char* argv []) {
   
   std::map<std::string, int> priority_map;
   priority_map["low"] = 1;
@@ -12,7 +11,7 @@ void create_task (std::vector<Task*>* tasks, std::map<int, Task*>& id_to_ptr,
   bool error = false;
   std::string title;
   std::string description;
-  int priority;
+  int priority = 0;
   int subtask_of = 0;
   for (int i = 2 ; i < argc ; i += 2) {
     if (i+1 == argc) {
@@ -39,7 +38,7 @@ void create_task (std::vector<Task*>* tasks, std::map<int, Task*>& id_to_ptr,
 	error = true;
       }
     }
-    else if (std::strcmp(argv[i], "--subtask_of") == 0 || std::strcmp(argv[i], "-st") == 0) {
+    else if (std::strcmp(argv[i], "--subtask_of") == 0 || std::strcmp(argv[i], "-sto") == 0) {
       int subtask_id = std::stoi(argv[i+1]);
       if (id_to_ptr.find(subtask_id) == id_to_ptr.end()) {
 	if (!error) {
@@ -59,9 +58,12 @@ void create_task (std::vector<Task*>* tasks, std::map<int, Task*>& id_to_ptr,
     if (subtask_of > 0 && priority != 0) {
       std::cout << "warning: a subtask cannot have a priority." << std::endl << std::endl;
     }
-    Task new_task (&id_to_ptr, *next_id, title, description, priority, subtask_of);
-    tasks->push_back(&new_task);
-    std::cout << "info: new task succesfully created (id:" << next_id << ").";
-    ++*next_id;
+    new_task->set_title(title);
+    new_task->set_description(description);
+    new_task->set_priority(priority);
+    new_task->set_subtask_of(subtask_of);
+    std::cout << "info: new task succesfully created (id:" << new_task->get_id () << ").";
+    return true;
   }
+  return false;
 };

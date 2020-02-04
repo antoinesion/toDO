@@ -2,24 +2,30 @@
 
 Task::Task (std::map<int, Task*>* id_to_ptr) : id_to_ptr(id_to_ptr) {}
 
-Task::Task (std::map<int, Task*>* id_to_ptr,
-    int id, std::string t, std::string d, int p, int st) :
-  id_to_ptr(id_to_ptr), id(id), title(t), description(d), priority(p), subtask_of(st) {
+Task::Task (std::map<int, Task*>* id_to_ptr, int id) : id_to_ptr(id_to_ptr), id(id) {
     (*id_to_ptr)[id] = this;
     time_t now = time(0);
     creation_date = now;
-    if (subtask_of > 0) {
-      (*id_to_ptr)[subtask_of]->add_subtask(id);
-      priority = 0;
-    }
 }
 
 int Task::get_id () {return id;}
+int Task::get_state () {return state;}
 int Task::get_progression () {return progression;}
 int Task::get_priority () {return priority;}
 time_t Task::get_creation_date () {return creation_date;}
 int Task::get_subtask_of () {return subtask_of;}
 bool Task::get_del () {return del;}
+
+void Task::set_title(std::string& t) {title = t;}
+void Task::set_description(std::string& d) {description = d;}
+void Task::set_priority (int p) {priority = p;}
+void Task::set_subtask_of (int sto) {
+  subtask_of = sto;
+  if (subtask_of > 0) {
+    (*id_to_ptr)[subtask_of]->add_subtask(id);
+    priority = 0;
+  }
+}
 
 void Task::update_progression () {
   int sum = 0;
@@ -28,13 +34,13 @@ void Task::update_progression () {
   }
   progression = sum / (subtasks_id.size()*100);
   if (progression == 0) {
-    status = 0;
+    state = 0;
   }
   else if (progression == 100) {
-    status = 2;
+    state = 2;
     closure_date = time(0);
   } else {
-    status = 1;
+    state = 1;
   }
 }
 
@@ -43,39 +49,22 @@ void Task::add_subtask (int subtask_id) {
   this->update_progression();
 }
 
-int Task::close (bool force) {
-  if (subtasks_id.size () == 0 && status != 2) {
-    status = 2;
+int Task::close () {
+  if (state != 2) {
+    state = 2;
     progression = 100;
     time_t now = time(0);
     closure_date = now;
-    return 1;
-  }
-  else if (subtasks_id.size () > 0 && status != 2) {
-    if (!force) {
-      std::cout << "(id:" << id << ") " << title << " has subtask(s)." << std::endl
-	<< "Closing it will also close all those subtask(s)." << std::endl
-	<< "Do you still want to proceed? [y/n] ";
-      char choice;
-      std::cin >> choice;
-      if (choice == 'y') { force = true; }
+    int nb_tasks_closed = 1;
+    for (int subtask_id : subtasks_id) {
+      nb_tasks_closed += (*id_to_ptr)[subtask_id]->close();
     }
-    if (force) {
-      int nb_tasks_closed = 0;
-      for (int subtask_id : subtasks_id) {
-	nb_tasks_closed += (*id_to_ptr)[subtask_id]->close(true);
-      }
-      status = 2;
-      progression = 100;
-      time_t now = time(0);
-      closure_date = now;
-      return nb_tasks_closed + 1;
-    }
+    return nb_tasks_closed;
   }
   return 0;
 }
 
-void Task::quickview (int sub) {
+int Task::quickview (int sub) {
   std::string pt;
   if (sub == 0) {
     pt = "-";
@@ -83,9 +72,9 @@ void Task::quickview (int sub) {
     pt = "└";
   }
   std::string sprogr;
-  if (status == 0) {
+  if (state == 0) {
     sprogr = "Not Started";
-  } else if (status == 1) {
+  } else if (state == 1) {
     sprogr = "In Progress (" + std::to_string(progression) + "%)";
   } else {
     std::string scl_dt (ctime(&closure_date));
@@ -101,16 +90,18 @@ void Task::quickview (int sub) {
   std::cout << std::string((sub+1), ' ') << pt << " (id:" << id << ") "
     << title << ": " << sprogr << ' ' << spriority << std::endl;
 
+  int nb_tasks = 1;
   for (int subtask_id : subtasks_id) {
-    (*id_to_ptr)[subtask_id]->quickview(sub+1);
+    nb_tasks += (*id_to_ptr)[subtask_id]->quickview(sub+1);
   }
+  return nb_tasks;
 }
 
 void Task::print () {
   std::string sprogr;
-  if (status == 0) {
+  if (state == 0) {
     sprogr = "Not Started";
-  } else if (status == 1) {
+  } else if (state == 1) {
     sprogr = "In Progress (" + std::to_string(progression) + "%)";
   } else {
     std::string scl_dt (ctime(&closure_date));
@@ -180,17 +171,17 @@ void Task::read (std::string& stask) {
     end++;
   }
   description = stask.substr(srt,end-srt);
-  /* status */
+  /* state */
   end += 3; srt = end-1;
-  status = std::stoi(stask.substr(srt,end-srt));
+  state = std::stoi(stask.substr(srt,end-srt));
   /* creation_date */
-  end += 1; srt = end; 
+  end += 1; srt = end;
   while (stask[end] != ' ') {
     end++;
   }
   creation_date = std::stoi(stask.substr(srt,end-srt));
   /* closure_date */
-  if (status == 2) {
+  if (state == 2) {
     end += 1; srt = end;
     while (stask[end] != ' ') {
       end++;
@@ -240,9 +231,9 @@ void Task::write (std::ofstream& file) {
   file << id << ' ';
   file << '"' << title << '"' << ' ';
   file << '"' << description << '"' << ' ';
-  file << status << ' ';
+  file << state << ' ';
   file  << creation_date << ' ';
-  if (status == 2) {
+  if (state == 2) {
     file << closure_date << ' ';
   }
   file << progression << ' ';
