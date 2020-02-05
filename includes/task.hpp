@@ -7,6 +7,7 @@
 #include <ctime>
 #include <iostream>
 #include <string>
+#include <tuple>
 
 class Task {
   private:
@@ -19,7 +20,7 @@ class Task {
     int progression = 0;
     bool prgs_editable = true;
     int priority = 0;
-    std::vector<std::string> comments;
+    std::vector<std::tuple<std::string, time_t>> comments;
     std::vector<int> subtasks_id;
     int subtask_of;
     std::map<int, Task*>* id_to_ptr;
@@ -29,6 +30,7 @@ class Task {
     Task (std::map<int, Task*>* id_to_ptr, int id);
 
     int get_id ();
+    std::string get_title ();
     int get_state ();
     int get_progression ();
     int get_priority ();

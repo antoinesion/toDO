@@ -4,6 +4,7 @@
 #include "../includes/show.hpp"
 #include "../includes/close.hpp"
 #include "../includes/delete.hpp"
+#include "../includes/comment.hpp"
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -75,8 +76,8 @@ int main (int argc, char* argv []) {
     else if (std::strcmp(argv[1], "delete") == 0) {
       delete_tasks (id_to_ptr, argc, argv);
     }
-    else if (std::strcmp(argv[1], "comment") == 0) { /* pas de retour à la ligne */
-      /* ... */
+    else if (std::strcmp(argv[1], "comment") == 0) {
+      comment_task (id_to_ptr, argc, argv);
     }
     else if (std::strcmp(argv[1], "edit") == 0) {
       /* ... */ /* si c'est un sub verifier qu'il y a deja pas un sub dans l'autre sens */

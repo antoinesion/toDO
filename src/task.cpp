@@ -9,6 +9,7 @@ Task::Task (std::map<int, Task*>* id_to_ptr, int id) : id_to_ptr(id_to_ptr), id(
 }
 
 int Task::get_id () {return id;}
+std::string Task::get_title () {return title;}
 int Task::get_state () {return state;}
 int Task::get_progression () {return progression;}
 int Task::get_priority () {return priority;}
@@ -25,6 +26,12 @@ void Task::set_subtask_of (int sto) {
     (*id_to_ptr)[subtask_of]->add_subtask(id);
     priority = 0;
   }
+}
+
+void Task::add_comment (std::string& cmt) {
+  time_t now = time(0);
+  std::tuple<std::string, time_t> comment (cmt, now);
+  comments.push_back(comment);
 }
 
 void Task::update_progression () {
@@ -144,8 +151,12 @@ void Task::print () {
   }
   if (comments.size() != 0) {
     std::cout << "comment(s):" << std::endl;
-    for (std::string com : comments) {
-      std::cout << " - " << com << std::endl;
+    for (std::tuple<std::string, time_t> comment : comments) {
+      std::string cmt = std::get<0> (comment);
+      time_t date = std::get<1> (comment);
+      std::string sdate = ctime(&date);
+      std::cout << " - " << cmt << " (" << sdate.substr(0,sdate.length()-1)
+	<< ")" << std::endl;
     }
     std::cout << std::endl;
   }
@@ -211,18 +222,30 @@ void Task::read (std::string& stask) {
   priority = std::stoi(stask.substr(srt,end-srt));
   /* comments */
   int n;
-  end += 2; srt += 2;
+  end += 1; srt = end;
+  while (stask[end] != ' ') {
+    end++;
+  }
   n = std::stoi(stask.substr(srt,end-srt));
-  end--;
   for (int i = 0; i < n ; i++) {
-    end += 3; srt = end;
+    end += 2; srt = end;
     while (stask[end] != '"') {
       end++;
     }
-    comments.push_back(stask.substr(srt,end-srt));
+    std::string cmt = stask.substr(srt,end-srt);
+    end += 2; srt = end;
+    while (stask[end] != ' ') {
+      end++;
+    }
+    time_t date = std::stoi(stask.substr(srt,end-srt));
+    std::tuple<std::string, time_t> comment (cmt, date);
+    comments.push_back(comment);
   }
   /* subtasks */
-  end += 3; srt = end-1;
+  end += 1; srt = end;
+  while (stask[end] != ' ') {
+    end++;
+  }
   n = std::stoi(stask.substr(srt,end-srt));
   for (int i = 0; i < n ; i++) {
     end += 1; srt = end;
@@ -235,7 +258,10 @@ void Task::read (std::string& stask) {
     prgs_editable = false;
   }
   /* subtask_of */
-  end += 2; srt = end-1;
+  end += 1; srt = end;
+  while (stask[end] != ' ') {
+    end++;
+  }
   subtask_of = std::stoi(stask.substr(srt,end-srt));
 }
 
@@ -254,12 +280,21 @@ void Task::write (std::ofstream& file) {
     int n = comments.size();
     file << n << ' ';
     for (int i = 0 ; i < n ; i++) {
-      file << '"' << comments[i] << '"' << ' ';
+      std::string cmt = std::get<0> (comments[i]);
+      time_t date = std::get<1> (comments[i]);
+      file << '"' << cmt << '"' << ' ' << date << ' ';
     }
-    n = subtasks_id.size();
+    n = 0;
+    for (int subtask_id : subtasks_id) {
+      if (!(*id_to_ptr)[subtask_id]->to_del ()) {
+	n++;
+      }
+    }
     file << n << ' ';
     for (int i = 0 ; i < n ; i++) {
-      file << subtasks_id[i] << ' ';
+      if (!(*id_to_ptr)[subtasks_id[i]]->to_del ()) {
+	file << subtasks_id[i] << ' ';
+      }
     }
     file << subtask_of << ' ';
     file << '"' << std::endl;
