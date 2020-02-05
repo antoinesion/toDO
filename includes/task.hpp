@@ -23,7 +23,7 @@ class Task {
     std::vector<int> subtasks_id;
     int subtask_of;
     std::map<int, Task*>* id_to_ptr;
-    bool del = false;
+    bool to_delete = false;
   public:
     Task (std::map<int, Task*>* id_to_ptr);
     Task (std::map<int, Task*>* id_to_ptr, int id);
@@ -34,7 +34,7 @@ class Task {
     int get_priority ();
     time_t get_creation_date ();
     int get_subtask_of ();
-    bool get_del ();
+    bool to_del ();
 
     void set_title (std::string& t);
     void set_description (std::string& d);
@@ -46,6 +46,7 @@ class Task {
     void update_progression ();
     void add_subtask (int subtask_id);
     int close ();
+    int delete_task ();
 
     int quickview (int sub);
     void print ();

@@ -14,7 +14,7 @@ int Task::get_progression () {return progression;}
 int Task::get_priority () {return priority;}
 time_t Task::get_creation_date () {return creation_date;}
 int Task::get_subtask_of () {return subtask_of;}
-bool Task::get_del () {return del;}
+bool Task::to_del () {return to_delete;}
 
 void Task::set_title(std::string& t) {title = t;}
 void Task::set_description(std::string& d) {description = d;}
@@ -60,6 +60,18 @@ int Task::close () {
       nb_tasks_closed += (*id_to_ptr)[subtask_id]->close();
     }
     return nb_tasks_closed;
+  }
+  return 0;
+}
+
+int Task::delete_task () {
+  if (!to_delete) {
+    to_delete = true;
+    int nb_tasks_deleted = 1;
+    for (int subtask_id : subtasks_id) {
+      nb_tasks_deleted += (*id_to_ptr)[subtask_id]->delete_task ();
+    }
+    return nb_tasks_deleted;
   }
   return 0;
 }
@@ -228,26 +240,28 @@ void Task::read (std::string& stask) {
 }
 
 void Task::write (std::ofstream& file) {
-  file << id << ' ';
-  file << '"' << title << '"' << ' ';
-  file << '"' << description << '"' << ' ';
-  file << state << ' ';
-  file  << creation_date << ' ';
-  if (state == 2) {
-    file << closure_date << ' ';
+  if (!to_delete) {
+    file << id << ' ';
+    file << '"' << title << '"' << ' ';
+    file << '"' << description << '"' << ' ';
+    file << state << ' ';
+    file  << creation_date << ' ';
+    if (state == 2) {
+      file << closure_date << ' ';
+    }
+    file << progression << ' ';
+    file << priority << ' ';
+    int n = comments.size();
+    file << n << ' ';
+    for (int i = 0 ; i < n ; i++) {
+      file << '"' << comments[i] << '"' << ' ';
+    }
+    n = subtasks_id.size();
+    file << n << ' ';
+    for (int i = 0 ; i < n ; i++) {
+      file << subtasks_id[i] << ' ';
+    }
+    file << subtask_of << ' ';
+    file << '"' << std::endl;
   }
-  file << progression << ' ';
-  file << priority << ' ';
-  int n = comments.size();
-  file << n << ' ';
-  for (int i = 0 ; i < n ; i++) {
-    file << '"' << comments[i] << '"' << ' ';
-  }
-  n = subtasks_id.size();
-  file << n << ' ';
-  for (int i = 0 ; i < n ; i++) {
-    file << subtasks_id[i] << ' ';
-  }
-  file << subtask_of << ' ';
-  file << '"' << std::endl;
 }

@@ -3,6 +3,7 @@
 #include "../includes/list.hpp"
 #include "../includes/show.hpp"
 #include "../includes/close.hpp"
+#include "../includes/delete.hpp"
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -72,7 +73,7 @@ int main (int argc, char* argv []) {
       close_tasks (id_to_ptr, argc, argv);
     }
     else if (std::strcmp(argv[1], "delete") == 0) {
-      /* ... */
+      delete_tasks (id_to_ptr, argc, argv);
     }
     else if (std::strcmp(argv[1], "comment") == 0) { /* pas de retour à la ligne */
       /* ... */
