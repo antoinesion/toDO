@@ -42,11 +42,11 @@ class Task {
     void set_description (std::string& d);
     void set_priority (int p);
     void set_subtask_of (int sto);
-    /* ... */
 
     void add_comment (std::string& cmt);
     void update_progression ();
     void add_subtask (int subtask_id);
+    void del_subtask (int subtask_id);
     int close ();
     int delete_task ();
 

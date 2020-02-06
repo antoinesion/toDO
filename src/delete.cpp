@@ -40,7 +40,7 @@ void delete_tasks (std::map<int, Task*>& id_to_ptr, int argc, char* argv []) {
     if (!force) {
       std::cout << "It will delete the following tasks:" << std::endl;
       for (Task* tsk : tsk_to_delete) {
-	if (!tsk->to_del ()) {
+	if (!tsk->to_del ()) { // TODO: inutile
 	  tsk->quickview(0);
 	}
       }

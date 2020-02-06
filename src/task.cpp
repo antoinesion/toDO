@@ -21,6 +21,9 @@ void Task::set_title(std::string& t) {title = t;}
 void Task::set_description(std::string& d) {description = d;}
 void Task::set_priority (int p) {priority = p;}
 void Task::set_subtask_of (int sto) {
+  if (subtask_of > 0) {
+    (*id_to_ptr)[subtask_of]->del_subtask(id);
+  }
   subtask_of = sto;
   if (subtask_of > 0) {
     (*id_to_ptr)[subtask_of]->add_subtask(id);
@@ -56,6 +59,12 @@ void Task::add_subtask (int subtask_id) {
   this->update_progression();
 }
 
+void Task::del_subtask (int subtask_id) {
+  std::vector<int>::iterator it = std::find(subtasks_id.begin(), subtasks_id.end(), subtask_id);
+  int i = std::distance (subtasks_id.begin(),it);
+  subtasks_id.erase(subtasks_id.begin() + i);
+}
+
 int Task::close () {
   if (state != 2) {
     state = 2;
@@ -74,6 +83,9 @@ int Task::close () {
 int Task::delete_task () {
   if (!to_delete) {
     to_delete = true;
+    if (subtask_of > 0) {
+      (*id_to_ptr)[subtask_of]->del_subtask(id);
+    }
     int nb_tasks_deleted = 1;
     for (int subtask_id : subtasks_id) {
       nb_tasks_deleted += (*id_to_ptr)[subtask_id]->delete_task ();
@@ -284,17 +296,10 @@ void Task::write (std::ofstream& file) {
       time_t date = std::get<1> (comments[i]);
       file << '"' << cmt << '"' << ' ' << date << ' ';
     }
-    n = 0;
-    for (int subtask_id : subtasks_id) {
-      if (!(*id_to_ptr)[subtask_id]->to_del ()) {
-	n++;
-      }
-    }
+    n = subtasks_id.size();
     file << n << ' ';
     for (int i = 0 ; i < n ; i++) {
-      if (!(*id_to_ptr)[subtasks_id[i]]->to_del ()) {
-	file << subtasks_id[i] << ' ';
-      }
+      file << subtasks_id[i] << ' ';
     }
     file << subtask_of << ' ';
     file << '"' << std::endl;
