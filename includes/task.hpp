@@ -48,6 +48,7 @@ class Task {
     void update_progression ();
     void add_subtask (int subtask_id);
     void del_subtask (int subtask_id);
+    bool has_subtask (int subtask_id);
     int close ();
     int delete_task ();
 

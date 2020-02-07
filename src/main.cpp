@@ -5,6 +5,7 @@
 #include "../includes/close.hpp"
 #include "../includes/delete.hpp"
 #include "../includes/comment.hpp"
+#include "../includes/edit.hpp"
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -80,7 +81,10 @@ int main (int argc, char* argv []) {
       comment_task (id_to_ptr, argc, argv);
     }
     else if (std::strcmp(argv[1], "edit") == 0) {
-      /* ... */ /* si c'est un sub verifier qu'il y a deja pas un sub dans l'autre sens */
+      edit_task (id_to_ptr, argc, argv);
+    }
+    else if (std::strcmp(argv[1], "progress") == 0) {
+
     }
     else if (std::strcmp(argv[1], "help") == 0) {
 

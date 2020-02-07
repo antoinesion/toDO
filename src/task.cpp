@@ -71,6 +71,10 @@ void Task::del_subtask (int subtask_id) {
   subtasks_id.erase(subtasks_id.begin() + i);
 }
 
+bool Task::has_subtask (int subtask_id) {
+  return (std::find (subtasks_id.begin(), subtasks_id.end(), subtask_id) != subtasks_id.end());
+}
+
 int Task::close () {
   if (state != 2) {
     state = 2;
