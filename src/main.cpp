@@ -6,6 +6,7 @@
 #include "../includes/delete.hpp"
 #include "../includes/comment.hpp"
 #include "../includes/edit.hpp"
+#include "../includes/progress.hpp"
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -84,7 +85,7 @@ int main (int argc, char* argv []) {
       edit_task (id_to_ptr, argc, argv);
     }
     else if (std::strcmp(argv[1], "progress") == 0) {
-
+      progress_task (id_to_ptr, argc, argv);
     }
     else if (std::strcmp(argv[1], "help") == 0) {
 

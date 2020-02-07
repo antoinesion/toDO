@@ -1,5 +1,9 @@
 #include "../includes/task.hpp"
 
+bool statefilter_default (int state) {
+  return state >= 0;
+}
+
 Task::Task (std::map<int, Task*>* id_to_ptr) : id_to_ptr(id_to_ptr) {}
 
 Task::Task (std::map<int, Task*>* id_to_ptr, int id) : id_to_ptr(id_to_ptr), id(id) {
@@ -28,6 +32,21 @@ void Task::set_subtask_of (int sto) {
   if (subtask_of > 0) {
     (*id_to_ptr)[subtask_of]->add_subtask(id);
     priority = 0;
+    (*id_to_ptr)[subtask_of]->update_progression();
+  }
+}
+void Task::set_progression (int p) {
+  progression = p;
+  if (progression == 100 && state < 2) {
+    this->close ();
+  }
+  else if (progression == 0) {
+    state = 0;
+  } else {
+    state = 1;
+  }
+  if (subtask_of > 0) {
+    (*id_to_ptr)[subtask_of]->update_progression();
   }
 }
 
@@ -48,15 +67,17 @@ void Task::update_progression () {
   for (int subtask_id : subtasks_id) {
     sum += (*id_to_ptr)[subtask_id]->get_progression();
   }
-  progression = sum / (subtasks_id.size()*100);
-  if (progression == 0) {
-    state = 0;
+  progression = sum / subtasks_id.size();
+  if (progression == 100 && state < 2) {
+    this->close ();
   }
-  else if (progression == 100) {
-    state = 2;
-    closure_date = time(0);
+  else if (progression == 0) {
+    state = 0;
   } else {
     state = 1;
+  }
+  if (subtask_of > 0) {
+    (*id_to_ptr)[subtask_of]->update_progression();
   }
 }
 
@@ -73,6 +94,10 @@ void Task::del_subtask (int subtask_id) {
 
 bool Task::has_subtask (int subtask_id) {
   return (std::find (subtasks_id.begin(), subtasks_id.end(), subtask_id) != subtasks_id.end());
+}
+
+bool Task::has_any_subtask () {
+  return (subtasks_id.size() > 0);
 }
 
 int Task::close () {
@@ -105,37 +130,46 @@ int Task::delete_task () {
   return 0;
 }
 
-int Task::quickview (int sub) {
-  std::string pt;
-  if (sub == 0) {
-    pt = "-";
-  } else {
-    pt = "└";
-  }
-  std::string sprogr;
-  if (state == 0) {
-    sprogr = "Not Started";
-  } else if (state == 1) {
-    sprogr = "In Progress (" + std::to_string(progression) + "%)";
-  } else {
-    std::string scl_dt (ctime(&closure_date));
-    sprogr = "Done (" + scl_dt.substr(0,scl_dt.length()-1) + ")";
-  }
-  std::string spriority (priority, '!');
-  if (priority == 0) {
-    spriority = "";
+int Task::quickview (int sub, std::function<bool(int)> statefilter) {
+  if (statefilter(state) || sub != 0) {
+    std::string pt;
+    if (sub == 0) {
+      pt = "-";
+    } else {
+      pt = "└";
+    }
+    std::string sprogr;
+    if (state == 0) {
+      sprogr = "Not Started";
+    } else if (state == 1) {
+      sprogr = "In Progress (" + std::to_string(progression) + "%)";
+    } else {
+      std::string scl_dt (ctime(&closure_date));
+      sprogr = "Done (" + scl_dt.substr(0,scl_dt.length()-1) + ")";
+    }
+    std::string spriority (priority, '!');
+    if (priority == 0) {
+      spriority = "";
+    }
+    else {
+      spriority = " [" + spriority + "]";
+    }
+    std::cout << std::string((sub+1), ' ') << pt << " (id:" << id << ") "
+      << title << ": " << sprogr << ' ' << spriority << std::endl;
+
+    int nb_tasks = 1;
+    for (int subtask_id : subtasks_id) {
+      nb_tasks += (*id_to_ptr)[subtask_id]->quickview(sub+1, statefilter);
+    }
+    return nb_tasks;
   }
   else {
-    spriority = " [" + spriority + "]";
+    int nb_tasks = 0;
+    for (int subtask_id : subtasks_id) {
+      nb_tasks += (*id_to_ptr)[subtask_id]->quickview(sub, statefilter);
+    }
+    return nb_tasks;
   }
-  std::cout << std::string((sub+1), ' ') << pt << " (id:" << id << ") "
-    << title << ": " << sprogr << ' ' << spriority << std::endl;
-
-  int nb_tasks = 1;
-  for (int subtask_id : subtasks_id) {
-    nb_tasks += (*id_to_ptr)[subtask_id]->quickview(sub+1);
-  }
-  return nb_tasks;
 }
 
 void Task::print () {

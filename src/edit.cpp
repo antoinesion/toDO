@@ -69,7 +69,7 @@ void edit_task (std::map<int, Task*>& id_to_ptr, int argc, char* argv []) {
 	}
       }
       if (!error) {
-	std::cout << "info: task (id:" << id << ") successfuly edited.";
+	std::cout << "info: task (id:" << id << ") successfully edited.";
       }
     }
   }

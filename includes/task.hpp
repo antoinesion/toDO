@@ -8,6 +8,9 @@
 #include <iostream>
 #include <string>
 #include <tuple>
+#include <functional>
+
+bool statefilter_default (int state);
 
 class Task {
   private:
@@ -42,6 +45,7 @@ class Task {
     void set_description (std::string& d);
     void set_priority (int p);
     void set_subtask_of (int sto);
+    void set_progression (int p);
 
     void add_comment (std::string& cmt);
     std::string del_comment (int cmt_i);
@@ -49,10 +53,11 @@ class Task {
     void add_subtask (int subtask_id);
     void del_subtask (int subtask_id);
     bool has_subtask (int subtask_id);
+    bool has_any_subtask ();
     int close ();
     int delete_task ();
 
-    int quickview (int sub);
+    int quickview (int sub, std::function<bool(int)> statefilter = statefilter_default);
     void print ();
 
     void read (std::string& stask);

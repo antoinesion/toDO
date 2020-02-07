@@ -1,63 +1,13 @@
 #include "../includes/list.hpp"
 
-bool taskcmp_id_incr(Task* t1, Task* t2) {
-  return t1->get_id() < t2->get_id();
-};
-
-bool taskcmp_priority_decr(Task* t1, Task* t2) {
-  return t1->get_priority () > t2->get_priority ();
-};
-
-bool taskcmp_priority_incr(Task* t1, Task* t2) {
-  return t1->get_priority () < t2->get_priority ();
-};
-
-bool taskcmp_date_incr(Task* t1, Task* t2) {
-  return t1->get_creation_date () < t2->get_creation_date ();
-};
-
-bool taskcmp_date_decr(Task* t1, Task* t2) {
-  return t1->get_creation_date () > t2->get_creation_date ();
-};
-
-bool priorityfilter (Task* t, char cmp, int priority) {
-  if (cmp == '-') {
-    return t->get_priority() <= priority;
-  } else if (cmp == '=') {
-    return t->get_priority() == priority;
-  } else {
-    return t->get_priority() >= priority;
-  }
-};
-
-bool statefilter_none(Task* t) {
-  return t->get_state () >= 0;
-};
-
-bool statefilter_not_started(Task* t) {
-  return t->get_state () == 0;
-};
-
-bool statefilter_in_progress(Task* t) {
-  return t->get_state () == 1;
-};
-
-bool statefilter_uncompleted(Task* t) {
-  return t->get_state () < 2;
-};
-
-bool statefilter_done(Task* t) {
-  return t->get_state () == 2;
-};
-
 void list_tasks (std::vector<Task*>& tasks, int argc, char* argv []) {
   
-  std::map<std::string, std::function<bool(Task*)>> statefilter_map;
-  std::function<bool(Task*)> statefilter = statefilter_none;
-  statefilter_map["not_started"] = statefilter_not_started;
-  statefilter_map["in_progress"] = statefilter_in_progress;
-  statefilter_map["uncompleted"] = statefilter_uncompleted;
-  statefilter_map["done"] = statefilter_done;
+  std::map<std::string, std::function<bool(int)>> statefilter_map;
+  std::function<bool(int)> statefilter = static_cast<bool(*)(int)> (statefilter_none);
+  statefilter_map["not_started"] = static_cast<bool(*)(int)> (statefilter_not_started);
+  statefilter_map["in_progress"] = static_cast<bool(*)(int)> (statefilter_in_progress);
+  statefilter_map["uncompleted"] = static_cast<bool(*)(int)> (statefilter_uncompleted);
+  statefilter_map["done"] = static_cast<bool(*)(int)> (statefilter_done);
 
   std::function<bool(Task*, Task*)> sort_function = taskcmp_id_incr;
 
@@ -153,8 +103,8 @@ void list_tasks (std::vector<Task*>& tasks, int argc, char* argv []) {
       std::cout << "list:" << std::endl;
       for (Task* tsk : tasks) {
 	if (tsk->get_subtask_of () == 0) {
-	  if (priorityfilter (tsk, priority_cmp, priority) && statefilter (tsk)) {
-	    nb_tasks += tsk->quickview(0);
+	  if (priorityfilter (tsk, priority_cmp, priority)) {
+	    nb_tasks += tsk->quickview(0, statefilter);
 	  }
 	}
       }
