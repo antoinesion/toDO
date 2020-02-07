@@ -130,13 +130,21 @@ int Task::delete_task () {
   return 0;
 }
 
-int Task::quickview (int sub, std::function<bool(int)> statefilter) {
+int Task::quickview (int sub, std::function<bool(int)> statefilter, bool last_sub) {
   if (statefilter(state) || sub != 0) {
     std::string pt;
+    std::string pre_pt = "  ";
     if (sub == 0) {
       pt = "-";
     } else {
-      pt = "└";
+      if (!last_sub) {
+	pt = "├";
+      } else {
+	pt = "└";
+      }
+    }
+    if (sub > 1) {
+      pre_pt = "│ ";
     }
     std::string sprogr;
     if (state == 0) {
@@ -154,12 +162,13 @@ int Task::quickview (int sub, std::function<bool(int)> statefilter) {
     else {
       spriority = " [" + spriority + "]";
     }
-    std::cout << std::string((sub+1), ' ') << pt << " (id:" << id << ") "
+    std::cout << std::string((2*sub), ' ') << pre_pt << pt << " (id:" << id << ") "
       << title << ": " << sprogr << ' ' << spriority << std::endl;
 
     int nb_tasks = 1;
-    for (int subtask_id : subtasks_id) {
-      nb_tasks += (*id_to_ptr)[subtask_id]->quickview(sub+1, statefilter);
+    int n = subtasks_id.size();
+    for (int i = 0 ; i < n; i++) {
+      nb_tasks += (*id_to_ptr)[subtasks_id[i]]->quickview(sub+1, statefilter, (i == n - 1));
     }
     return nb_tasks;
   }

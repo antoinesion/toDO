@@ -57,7 +57,8 @@ class Task {
     int close ();
     int delete_task ();
 
-    int quickview (int sub, std::function<bool(int)> statefilter = statefilter_default);
+    int quickview (int sub, std::function<bool(int)> statefilter = statefilter_default,
+	bool last_sub = false);
     void print ();
 
     void read (std::string& stask);
