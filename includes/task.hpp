@@ -44,6 +44,7 @@ class Task {
     void set_subtask_of (int sto);
 
     void add_comment (std::string& cmt);
+    std::string del_comment (int cmt_i);
     void update_progression ();
     void add_subtask (int subtask_id);
     void del_subtask (int subtask_id);

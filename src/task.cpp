@@ -37,6 +37,12 @@ void Task::add_comment (std::string& cmt) {
   comments.push_back(comment);
 }
 
+std::string Task::del_comment (int cmt_i) {
+  std::string cmt = std::get<0> (comments[cmt_i-1]);
+  comments.erase(comments.begin() + cmt_i - 1);
+  return cmt;
+}
+
 void Task::update_progression () {
   int sum = 0;
   for (int subtask_id : subtasks_id) {
