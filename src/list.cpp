@@ -1,7 +1,7 @@
 #include "../includes/list.hpp"
 
 void list_tasks (std::vector<Task*>& tasks, int argc, char* argv []) {
-  
+
   std::map<std::string, std::function<bool(int)>> statefilter_map;
   std::function<bool(int)> statefilter = static_cast<bool(*)(int)> (statefilter_none);
   statefilter_map["not_started"] = static_cast<bool(*)(int)> (statefilter_not_started);
@@ -9,7 +9,7 @@ void list_tasks (std::vector<Task*>& tasks, int argc, char* argv []) {
   statefilter_map["uncompleted"] = static_cast<bool(*)(int)> (statefilter_uncompleted);
   statefilter_map["done"] = static_cast<bool(*)(int)> (statefilter_done);
 
-  std::function<bool(Task*, Task*)> sort_function = taskcmp_id_incr;
+  std::function<bool(Task*, Task*)> sort_function = taskcmp_default;
 
   std::map<char,bool> incr_map;
   incr_map['+'] = true;
@@ -102,7 +102,7 @@ void list_tasks (std::vector<Task*>& tasks, int argc, char* argv []) {
       int nb_tasks = 0;
       std::cout << "list:" << std::endl;
       for (Task* tsk : tasks) {
-	if (tsk->get_subtask_of () == 0) {
+	if (tsk->get_depth () == 0) {
 	  if (priorityfilter (tsk, priority_cmp, priority)) {
 	    nb_tasks += tsk->quickview(0, statefilter);
 	  }
@@ -110,7 +110,7 @@ void list_tasks (std::vector<Task*>& tasks, int argc, char* argv []) {
       }
       std::cout << nb_tasks << " task(s).";
     } else {
-      std::cout << "info: you have not created any task.";
+      std::cout << "info: you haven't created any task.";
     }
   }
 };

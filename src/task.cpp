@@ -4,6 +4,10 @@ bool statefilter_default (int state) {
   return state >= 0;
 }
 
+bool tasksort_default(Task* t1, Task* t2) {
+  return t1->get_position () < t2->get_position ();
+};
+
 Task::Task (std::map<int, Task*>* id_to_ptr) : id_to_ptr(id_to_ptr) {}
 
 Task::Task (std::map<int, Task*>* id_to_ptr, int id) : id_to_ptr(id_to_ptr), id(id) {
@@ -19,7 +23,16 @@ int Task::get_progression () {return progression;}
 int Task::get_priority () {return priority;}
 time_t Task::get_creation_date () {return creation_date;}
 int Task::get_subtask_of () {return subtask_of;}
+double Task::get_position () {return position;}
 bool Task::to_del () {return to_delete;}
+
+int Task::get_depth () {
+  if (subtask_of == 0) {
+    return 0;
+  } else {
+    return 1 + (*id_to_ptr)[subtask_of]->get_depth ();
+  }
+}
 
 void Task::set_title(std::string& t) {title = t;}
 void Task::set_description(std::string& d) {description = d;}
@@ -29,12 +42,13 @@ void Task::set_subtask_of (int sto) {
     (*id_to_ptr)[subtask_of]->del_subtask(id);
   }
   subtask_of = sto;
+  position = 0.;
   if (subtask_of > 0) {
     (*id_to_ptr)[subtask_of]->add_subtask(id);
     priority = 0;
-    (*id_to_ptr)[subtask_of]->update_progression();
   }
 }
+void Task::set_position (double pos) {position = pos;}
 void Task::set_progression (int p) {
   progression = p;
   if (progression == 100 && state < 2) {
@@ -81,15 +95,31 @@ void Task::update_progression () {
   }
 }
 
+void Task::update_subtasks_position () {
+  std::vector<Task*> subtasks;
+  for (int subtask_id : subtasks_id) {
+    subtasks.push_back((*id_to_ptr)[subtask_id]);
+  }
+  std::sort (subtasks.begin(), subtasks.end(), tasksort_default);
+  double pos = 1.;
+  for (Task* tsk : subtasks) {
+    tsk->set_position (pos);
+    pos++;
+  }
+}
+
 void Task::add_subtask (int subtask_id) {
   subtasks_id.push_back(subtask_id);
-  this->update_progression();
+  (*id_to_ptr)[subtask_id]->set_position ((double) subtasks_id.size());
+  this->update_progression ();
 }
 
 void Task::del_subtask (int subtask_id) {
   std::vector<int>::iterator it = std::find(subtasks_id.begin(), subtasks_id.end(), subtask_id);
   int i = std::distance (subtasks_id.begin(),it);
   subtasks_id.erase(subtasks_id.begin() + i);
+  this->update_progression ();
+  this->update_subtasks_position ();
 }
 
 bool Task::has_subtask (int subtask_id) {
@@ -167,8 +197,13 @@ int Task::quickview (int sub, std::function<bool(int)> statefilter, bool last_su
 
     int nb_tasks = 1;
     int n = subtasks_id.size();
+    std::vector<Task*> subtasks;
+    for (int subtask_id : subtasks_id) {
+      subtasks.push_back((*id_to_ptr)[subtask_id]);
+    }
+    std::sort (subtasks.begin(), subtasks.end(), tasksort_default);
     for (int i = 0 ; i < n; i++) {
-      nb_tasks += (*id_to_ptr)[subtasks_id[i]]->quickview(sub+1, statefilter, (i == n - 1));
+      nb_tasks += subtasks[i]->quickview(sub+1, statefilter, (i == n - 1));
     }
     return nb_tasks;
   }
@@ -328,6 +363,12 @@ void Task::read (std::string& stask) {
     end++;
   }
   subtask_of = std::stoi(stask.substr(srt,end-srt));
+  /* position */
+  end += 1; srt = end;
+  while (stask[end] != ' ') {
+    end++;
+  }
+  position = std::stoi(stask.substr(srt,end-srt));
 }
 
 void Task::write (std::ofstream& file) {
@@ -355,6 +396,7 @@ void Task::write (std::ofstream& file) {
       file << subtasks_id[i] << ' ';
     }
     file << subtask_of << ' ';
+    file << position << ' ';
     file << '"' << std::endl;
   }
 }

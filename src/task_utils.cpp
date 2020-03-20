@@ -1,7 +1,7 @@
 #include "../includes/task_utils.hpp"
 
-bool taskcmp_id_incr(Task* t1, Task* t2) {
-  return t1->get_id() < t2->get_id();
+bool taskcmp_default(Task* t1, Task* t2) {
+  return t1->get_position () < t2->get_position ();
 };
 
 bool taskcmp_priority_decr(Task* t1, Task* t2) {

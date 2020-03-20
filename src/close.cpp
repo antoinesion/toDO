@@ -5,7 +5,7 @@ bool statefilter (Task* t) {
 };
 
 void close_tasks (std::map<int, Task*>& id_to_ptr, int argc, char* argv []) {
-  
+
   if (argc == 2) {
     std::cerr << "/!\\ error: no id detected afer 'close'.";
   }
@@ -30,7 +30,7 @@ void close_tasks (std::map<int, Task*>& id_to_ptr, int argc, char* argv []) {
     for (int id : id_to_close) {
       int id_sub = id;
       bool pop = false;
-      while (id_to_ptr[id_sub]->get_subtask_of () != 0 && !pop) {
+      while (id_to_ptr[id_sub]->get_depth () > 0 && !pop) {
 	id_sub = id_to_ptr[id_sub]->get_subtask_of ();
 	if (std::find(id_to_close.begin(), id_to_close.end(), id_sub) != id_to_close.end()) {
 	  pop = true;
@@ -58,7 +58,7 @@ void close_tasks (std::map<int, Task*>& id_to_ptr, int argc, char* argv []) {
 	std::cout << "Action abort.";
       }
     }
-    
+
     if (force) {
       int nb_tasks_closed = 0;
       for (Task* tsk : tsk_to_close) {

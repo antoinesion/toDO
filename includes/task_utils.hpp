@@ -2,7 +2,7 @@
 #define TASK_UTILS_H
 #include "task.hpp"
 
-bool taskcmp_id_incr(Task* t1, Task* t2);
+bool taskcmp_default(Task* t1, Task* t2);
 
 bool taskcmp_priority_decr(Task* t1, Task* t2);
 

@@ -7,6 +7,7 @@
 #include "../includes/comment.hpp"
 #include "../includes/edit.hpp"
 #include "../includes/progress.hpp"
+#include "../includes/move.hpp"
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -54,6 +55,11 @@ int main (int argc, char* argv []) {
   ifile.close();
 
   /* --- DEALING WITH ACTION --- */
+  Task task_to_move = Task(&id_to_ptr);
+  int where_id;
+  int positioning;
+  bool task_moved = false;
+
   if (argc < 2) {
     std::cerr << "/!\\ error: no action passed in argument.";
     /* show help */
@@ -87,6 +93,9 @@ int main (int argc, char* argv []) {
     else if (std::strcmp(argv[1], "progress") == 0) {
       progress_task (id_to_ptr, argc, argv);
     }
+    else if (std::strcmp(argv[1], "move") == 0) {
+      task_moved = move_task (&task_to_move, &where_id, &positioning, id_to_ptr, argc, argv);
+    }
     else if (std::strcmp(argv[1], "help") == 0) {
 
     }
@@ -96,8 +105,22 @@ int main (int argc, char* argv []) {
   /* --- SAVING TASKS --- */
   std::ofstream ofile (file_path);
   ofile << next_id << std::endl;
-  for (Task* tsk : tasks) {
-    tsk->write (ofile);
+  if (!task_moved) {
+    for (Task* tsk : tasks) {
+      tsk->write (ofile);
+    }
+  } else {
+    for (Task* tsk : tasks) {
+      if (tsk->get_id () == where_id && positioning == -1) {
+	task_to_move.write (ofile);
+      }
+      if (tsk->get_id () != task_to_move.get_id ()) {
+	tsk->write (ofile);
+      }
+      if (tsk->get_id () == where_id && positioning == 1) {
+	task_to_move.write (ofile);
+      }
+    }
   }
   ofile.close();
   return 0;

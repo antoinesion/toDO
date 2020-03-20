@@ -1,7 +1,7 @@
 #include "../includes/edit.hpp"
 
 void edit_task (std::map<int, Task*>& id_to_ptr, int argc, char* argv []) {
-  
+
   std::map<std::string, int> priority_map;
   priority_map["low"] = 1;
   priority_map["medium"] = 2;
@@ -38,7 +38,7 @@ void edit_task (std::map<int, Task*>& id_to_ptr, int argc, char* argv []) {
 	  id_to_ptr[id]->set_description(description);
 	}
 	else if (std::strcmp(argv[i], "--priority") == 0 || std::strcmp(argv[i], "-p") == 0) {
-	  if (id_to_ptr[id]->get_subtask_of () != 0) {
+	  if (id_to_ptr[id]->get_depth () > 0) {
 	    std::cerr << "/!\\ warning: a subtask cannot have a priority." << std::endl;
 	  }
 	  else if (priority_map.find(argv[i+1]) != priority_map.end()) {

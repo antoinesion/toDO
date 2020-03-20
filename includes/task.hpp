@@ -25,7 +25,8 @@ class Task {
     int priority = 0;
     std::vector<std::tuple<std::string, time_t>> comments;
     std::vector<int> subtasks_id;
-    int subtask_of;
+    int subtask_of = 0;
+    double position = 0.;
     std::map<int, Task*>* id_to_ptr;
     bool to_delete = false;
   public:
@@ -39,17 +40,22 @@ class Task {
     int get_priority ();
     time_t get_creation_date ();
     int get_subtask_of ();
+    double get_position ();
     bool to_del ();
+    int get_depth ();
 
     void set_title (std::string& t);
     void set_description (std::string& d);
     void set_priority (int p);
     void set_subtask_of (int sto);
+    void set_position (double pos);
     void set_progression (int p);
-
     void add_comment (std::string& cmt);
     std::string del_comment (int cmt_i);
+    
     void update_progression ();
+    void update_subtasks_position ();
+
     void add_subtask (int subtask_id);
     void del_subtask (int subtask_id);
     bool has_subtask (int subtask_id);
@@ -64,5 +70,7 @@ class Task {
     void read (std::string& stask);
     void write (std::ofstream& file);
 };
+
+bool tasksort_default(Task* t1, Task* t2);
 
 #endif

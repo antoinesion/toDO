@@ -54,6 +54,10 @@ bool create_task (Task* new_task, std::map<int, Task*>& id_to_ptr, int argc, cha
       error = true;
     }
   }
+  if (title == "") {
+      std::cerr << "/!\\ error: title of a task cannot be empty.";
+      error = true;
+  }
   if (!error) {
     if (subtask_of > 0 && priority != 0) {
       std::cout << "warning: a subtask cannot have a priority." << std::endl << std::endl;
