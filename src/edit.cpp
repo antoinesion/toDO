@@ -29,12 +29,20 @@ void edit_task (std::map<int, Task*>& id_to_ptr, int argc, char* argv []) {
 	  if (title.find("\n") != std::string::npos) {
 	    std::cerr << "/!\\ error: no multi-lined title allowed. ";
 	    error = true;
+	  } else if (title == "") {
+	    std::cerr << "/!\\ error: a title of a task cannot be empty. ";
+	    error = true;
 	  } else {
 	    id_to_ptr[id]->set_title(title);
 	  }
 	}
 	else if (std::strcmp(argv[i], "--description") == 0 || std::strcmp(argv[i], "-d") == 0) {
 	  std::string description (argv[i+1]);
+	  id_to_ptr[id]->set_description(description);
+	}
+	else if (std::strcmp(argv[i], "-+description") == 0 || std::strcmp(argv[i], "+d") == 0) {
+	  std::string description (argv[i+1]);
+	description = id_to_ptr[id]->get_description () + "\n" +description;
 	  id_to_ptr[id]->set_description(description);
 	}
 	else if (std::strcmp(argv[i], "--priority") == 0 || std::strcmp(argv[i], "-p") == 0) {
@@ -45,7 +53,7 @@ void edit_task (std::map<int, Task*>& id_to_ptr, int argc, char* argv []) {
 	    int priority = priority_map[argv[i+1]];
 	    id_to_ptr[id]->set_priority(priority);
 	  } else {
-	    std::cerr << "/!\\ error: priority '" << argv[i+1] << "' unknowned.";
+	    std::cerr << "/!\\ error: priority '" << argv[i+1] << "' unknowned. ";
 	    error = true;
 	  }
 	}

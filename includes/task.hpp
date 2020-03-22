@@ -10,6 +10,9 @@
 #include <tuple>
 #include <functional>
 
+#include <sys/ioctl.h>
+#include <unistd.h>
+
 bool statefilter_default (int state);
 
 class Task {
@@ -35,6 +38,7 @@ class Task {
 
     int get_id ();
     std::string get_title ();
+    std::string get_description ();
     int get_state ();
     int get_progression ();
     int get_priority ();

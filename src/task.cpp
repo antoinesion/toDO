@@ -18,6 +18,7 @@ Task::Task (std::map<int, Task*>* id_to_ptr, int id) : id_to_ptr(id_to_ptr), id(
 
 int Task::get_id () {return id;}
 std::string Task::get_title () {return title;}
+std::string Task::get_description () {return description;}
 int Task::get_state () {return state;}
 int Task::get_progression () {return progression;}
 int Task::get_priority () {return priority;}
@@ -56,7 +57,7 @@ void Task::set_progression (int p) {
   }
   else if (progression == 0) {
     state = 0;
-  } else {
+  } else if (progression < 100) {
     state = 1;
   }
   if (subtask_of > 0) {
@@ -217,6 +218,10 @@ int Task::quickview (int sub, std::function<bool(int)> statefilter, bool last_su
 }
 
 void Task::print () {
+  struct winsize size;
+  ioctl(STDOUT_FILENO, TIOCGWINSZ, &size);
+
+  std::string scr_dt = ctime(&creation_date);
   std::string sprogr;
   if (state == 0) {
     sprogr = "Not Started";
@@ -233,16 +238,17 @@ void Task::print () {
   else {
     spriority = " [" + spriority + "]";
   }
-  std::string space (56 - sprogr.length() - (priority > 0) - spriority.length(), ' ');
-  if (title.length()%2 == 1) {
-    space = space.substr(0,space.length()-1);
-  }
-  std::string scr_dt = ctime(&creation_date);
+  std::string space (size.ws_col - scr_dt.length() + 1
+      - sprogr.length() - spriority.length(), ' ');
   std::cout << std::endl << scr_dt.substr(0,scr_dt.length()-1)
-    << space << sprogr << ' ' << spriority << std::endl;
-  int nsep = (78 - title.length()) / 2;
-  std::string sep (nsep, '*');
-  std::cout << sep << ' ' << title << ' ' <<  sep << std::endl;
+    << space << sprogr << spriority << std::endl;
+  int nsep = (size.ws_col - 2 - title.length()) / 2;
+  std::string sepL (nsep, '-');
+  std::string sepR (nsep, '-');
+  if ((size.ws_col - title.length())%2 == 1) {
+    sepR = sepR + "-";
+  }
+  std::cout << sepL << ' ' << title << ' ' <<  sepR << std::endl;
   if (description != "") {
     std::cout << description << std::endl << std::endl;
   }
@@ -260,17 +266,16 @@ void Task::print () {
     }
     std::cout << std::endl;
   }
-  else {
-    std::cout << "no comment." << std::endl << std::endl;
-  }
   if (subtasks_id.size() != 0) {
     std::cout << "subtask(s):" << std::endl;
+    std::vector<Task*> subtasks;
     for (int subtask_id : subtasks_id) {
-      (*id_to_ptr)[subtask_id]->quickview(0);
+      subtasks.push_back((*id_to_ptr)[subtask_id]);
     }
-  }
-  else {
-    std::cout << "no subtask." << std::endl;
+    std::sort (subtasks.begin(), subtasks.end(), tasksort_default);
+    for (Task* subtask : subtasks) {
+      subtask->quickview(0);
+    }
   }
 }
 

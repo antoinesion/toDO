@@ -23,13 +23,12 @@ void progress_task (std::map<int, Task*>& id_to_ptr, int argc, char* argv []) {
 	std::string sprogress (argv[3]);
 	int progress = std::stoi(argv[3]);
 	if (sprogress.find("+") == std::string::npos && sprogress.find("-") == std::string::npos) {
-	  if (progress <= 100) {
+	  if (0 <= progress && progress <= 100) {
 	    id_to_ptr[id]->set_progression(progress);
-	    std::cout << "info: progression of task '" << id_to_ptr[id]->get_title ()
-	      << "' succesfully upddated.";
+	    std::cout << "info: progression of task (id:" << id << ") succesfully upddated.";
 	  }
 	  else {
-	    std::cerr << "/!\\ error: progression number is a % (must be less than 100).";
+	    std::cerr << "/!\\ error: progression number is a % (must be between 0 and 100).";
 	  }
 	}
 	else {
@@ -43,8 +42,7 @@ void progress_task (std::map<int, Task*>& id_to_ptr, int argc, char* argv []) {
 	  else {
 	    id_to_ptr[id]->set_progression(100);
 	  }
-	  std::cout << "info: progression of task '" << id_to_ptr[id]->get_title ()
-	    << "' succesfully upddated.";
+	  std::cout << "info: progression of task (id:" << id << ") succesfully upddated.";
 	}
       }
     }

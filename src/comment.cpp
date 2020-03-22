@@ -25,8 +25,7 @@ void comment_task (std::map<int, Task*>& id_to_ptr, int argc, char* argv []) {
 	  }
 	  else {
 	    id_to_ptr[id]->add_comment (cmt);
-	    std::cout << "info: new comment successfully added to task '"
-	      << id_to_ptr[id]->get_title () << "'.";
+	    std::cout << "info: new comment successfully added to task (id:" << id << ").";
 	  }
 	}
       }
