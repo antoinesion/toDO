@@ -61,8 +61,8 @@ int main (int argc, char* argv []) {
   bool task_moved = false;
 
   if (argc < 2) {
-    std::cerr << "/!\\ error: no action passed in argument.";
-    /* show help */
+    std::cerr << "\033[1;31m/!\\ error:\033[1;31m no action passed in argument." << std::endl
+      << "\033[1minfo:\033[0m use 'help' to ask for assistance.";
   }
   else {
     if (std::strcmp(argv[1], "create") == 0) {
@@ -98,9 +98,12 @@ int main (int argc, char* argv []) {
     }
     else if (std::strcmp(argv[1], "help") == 0) {
 
+    } else {
+    std::cerr << "\033[1;31m/!\\ error:\033[1;31m action '" << argv[1] << "' unkown." << std::endl
+      << "\033[1minfo:\033[0m use action 'help' to ask for assistance.";
     }
   }
-  std::cout << std::endl << std::endl;
+  std::cout << "\033[0m" << std::endl << std::endl;
 
   /* --- SAVING TASKS --- */
   std::ofstream ofile (file_path);

@@ -13,7 +13,10 @@
 #include <sys/ioctl.h>
 #include <unistd.h>
 
+#include "../libs/string_tools.hpp"
+
 bool statefilter_default (int state);
+void remove_special_chars(std::string* s);
 
 class Task {
   private:
@@ -68,7 +71,7 @@ class Task {
     int delete_task ();
 
     int quickview (int sub, std::function<bool(int)> statefilter = statefilter_default,
-	bool last_sub = false);
+	bool last_sub = false, std::string pre_taskview = "");
     void print ();
 
     void read (std::string& stask);

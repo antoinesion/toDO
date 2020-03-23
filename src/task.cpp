@@ -4,9 +4,30 @@ bool statefilter_default (int state) {
   return state >= 0;
 }
 
+void remove_special_chars(std::string* s) {
+  replace_all(s, "é", "e");
+  replace_all(s, "è", "e");
+  replace_all(s, "ê", "e");
+  replace_all(s, "ô", "o");
+  replace_all(s, "à", "a");
+  replace_all(s, "î", "i");
+  replace_all(s, "ù", "u");
+  replace_all(s, "û", "u");
+  replace_all(s, "ç", "c");
+  replace_all(s, "É", "E");
+  replace_all(s, "È", "E");
+  replace_all(s, "Ê", "E");
+  replace_all(s, "Ô", "O");
+  replace_all(s, "À", "A");
+  replace_all(s, "Î", "I");
+  replace_all(s, "Ù", "U");
+  replace_all(s, "Û", "U");
+  replace_all(s, "Ç", "C");
+}
+
 bool tasksort_default(Task* t1, Task* t2) {
   return t1->get_position () < t2->get_position ();
-};
+}
 
 Task::Task (std::map<int, Task*>* id_to_ptr) : id_to_ptr(id_to_ptr) {}
 
@@ -35,8 +56,14 @@ int Task::get_depth () {
   }
 }
 
-void Task::set_title(std::string& t) {title = t;}
-void Task::set_description(std::string& d) {description = d;}
+void Task::set_title(std::string& t) {
+  remove_special_chars(&t);
+  title = t;
+}
+void Task::set_description(std::string& d) {
+  remove_special_chars(&d);
+  description = d;
+}
 void Task::set_priority (int p) {priority = p;}
 void Task::set_subtask_of (int sto) {
   if (subtask_of > 0) {
@@ -78,34 +105,38 @@ std::string Task::del_comment (int cmt_i) {
 }
 
 void Task::update_progression () {
-  int sum = 0;
-  for (int subtask_id : subtasks_id) {
-    sum += (*id_to_ptr)[subtask_id]->get_progression();
-  }
-  progression = sum / subtasks_id.size();
-  if (progression == 100 && state < 2) {
-    this->close ();
-  }
-  else if (progression == 0) {
-    state = 0;
-  } else {
-    state = 1;
-  }
-  if (subtask_of > 0) {
-    (*id_to_ptr)[subtask_of]->update_progression();
+  if (subtasks_id.size() > 0) {
+    int sum = 0;
+    for (int subtask_id : subtasks_id) {
+      sum += (*id_to_ptr)[subtask_id]->get_progression();
+    }
+    progression = sum / subtasks_id.size();
+    if (progression == 100 && state < 2) {
+      this->close ();
+    }
+    else if (progression == 0) {
+      state = 0;
+    } else {
+      state = 1;
+    }
+    if (subtask_of > 0) {
+      (*id_to_ptr)[subtask_of]->update_progression();
+    }
   }
 }
 
 void Task::update_subtasks_position () {
-  std::vector<Task*> subtasks;
-  for (int subtask_id : subtasks_id) {
-    subtasks.push_back((*id_to_ptr)[subtask_id]);
-  }
-  std::sort (subtasks.begin(), subtasks.end(), tasksort_default);
-  double pos = 1.;
-  for (Task* tsk : subtasks) {
-    tsk->set_position (pos);
-    pos++;
+  if (subtasks_id.size() > 0) {
+    std::vector<Task*> subtasks;
+    for (int subtask_id : subtasks_id) {
+      subtasks.push_back((*id_to_ptr)[subtask_id]);
+    }
+    std::sort (subtasks.begin(), subtasks.end(), tasksort_default);
+    double pos = 1.;
+    for (Task* tsk : subtasks) {
+      tsk->set_position (pos);
+      pos++;
+    }
   }
 }
 
@@ -161,41 +192,82 @@ int Task::delete_task () {
   return 0;
 }
 
-int Task::quickview (int sub, std::function<bool(int)> statefilter, bool last_sub) {
+int Task::quickview (int sub, std::function<bool(int)> statefilter, bool last_sub,
+    std::string pre_taskview) {
+  struct winsize size;
+  ioctl(STDOUT_FILENO, TIOCGWINSZ, &size);
+
   if (statefilter(state) || sub != 0) {
     std::string pt;
-    std::string pre_pt = "  ";
+    std::string pt_;
     if (sub == 0) {
-      pt = "-";
+      pt = "- ";
+      pt_ = "  ";
     } else {
+      pt_ = "│ ";
       if (!last_sub) {
-	pt = "├";
+	pt = "├ ";
       } else {
-	pt = "└";
+	pt = "└ ";
       }
     }
-    if (sub > 1) {
-      pre_pt = "│ ";
-    }
-    std::string sprogr;
+    std::string sprogr1;
+    std::string sprogr2;
+    std::string color;
     if (state == 0) {
-      sprogr = "Not Started";
+      color = "35";
+      sprogr1 = "Not Started ";
     } else if (state == 1) {
-      sprogr = "In Progress (" + std::to_string(progression) + "%)";
+      color = "33";
+      sprogr1 = "In Progress ";
+      sprogr2 = "(" + std::to_string(progression) + "%) ";
     } else {
+      color = "32";
       std::string scl_dt (ctime(&closure_date));
-      sprogr = "Done (" + scl_dt.substr(0,scl_dt.length()-1) + ")";
+      sprogr1 = "Done ";
+      sprogr2 = "(" + scl_dt.substr(0,scl_dt.length()-1) + ") ";
     }
     std::string spriority (priority, '!');
     if (priority == 0) {
       spriority = "";
     }
     else {
-      spriority = " [" + spriority + "]";
+      spriority = "[" + spriority + "]";
     }
-    std::cout << std::string((2*sub), ' ') << pre_pt << pt << " (id:" << id << ") "
-      << title << ": " << sprogr << ' ' << spriority << std::endl;
-
+    std::string taskview = "(id:" + std::to_string(id) + ") " + title + ": ";
+    int max_len = size.ws_col - pre_taskview.length() - 4;
+    std::vector<std::string> split_taskview = split_len(taskview, max_len);
+    if (split_taskview.back().length() + sprogr1.length() <= max_len) {
+      if (split_taskview.back().length() + sprogr1.length() + sprogr2.length() <= max_len) {
+	if (split_taskview.back().length() + sprogr1.length() + sprogr2.length() 
+	    + spriority.length() <= max_len) {
+	  split_taskview.back() += "\033[1;" + color + "m" + sprogr1
+	    + "\033[0;" + color + "m" + sprogr2
+	    + "\033[1;31m" + spriority + "\033[0m";
+	} else {
+	  split_taskview.back() += "\033[1;" + color + "m" + sprogr1
+	    + "\033[0;" + color + "m" + sprogr2 + "\033[0m";
+	  split_taskview.push_back("\033[1;31m" + spriority + "\033[0m");
+	}
+      } else {
+	split_taskview.back() += "\033[1;" + color + "m" + sprogr1 + "\033[0m";
+	split_taskview.push_back("\033[0;" + color + "m" + sprogr2
+	  + "\033[1;31m" + spriority + "\033[0m");
+      }
+    } else {
+      split_taskview.push_back("\033[1;" + color + "m" + sprogr1
+	+ "\033[0;" + color + "m" + sprogr2
+	+ "\033[1;31m" + spriority + "\033[0m");
+    }
+    for (int i = 0; i < split_taskview.size() ; i++) {
+      std::cout << "  " + pre_taskview;
+      if (i == 0) {
+	std::cout << pt;
+      } else {
+	std::cout << pt_;
+      }
+      std::cout << split_taskview[i] << std::endl;
+    }
     int nb_tasks = 1;
     int n = subtasks_id.size();
     std::vector<Task*> subtasks;
@@ -204,7 +276,11 @@ int Task::quickview (int sub, std::function<bool(int)> statefilter, bool last_su
     }
     std::sort (subtasks.begin(), subtasks.end(), tasksort_default);
     for (int i = 0 ; i < n; i++) {
-      nb_tasks += subtasks[i]->quickview(sub+1, statefilter, (i == n - 1));
+      if (!last_sub && sub > 0) {
+	nb_tasks += subtasks[i]->quickview(sub+1, statefilter, (i == n - 1), pre_taskview + "| ");
+      } else {
+	nb_tasks += subtasks[i]->quickview(sub+1, statefilter, (i == n - 1), pre_taskview + "  ");
+      }
     }
     return nb_tasks;
   }
@@ -222,33 +298,42 @@ void Task::print () {
   ioctl(STDOUT_FILENO, TIOCGWINSZ, &size);
 
   std::string scr_dt = ctime(&creation_date);
-  std::string sprogr;
-  if (state == 0) {
-    sprogr = "Not Started";
-  } else if (state == 1) {
-    sprogr = "In Progress (" + std::to_string(progression) + "%)";
-  } else {
-    std::string scl_dt (ctime(&closure_date));
-    sprogr = "Done (" + scl_dt.substr(0,scl_dt.length()-1) + ")";
-  }
-  std::string spriority (priority, '!');
-  if (priority == 0) {
-    spriority = "";
-  }
-  else {
-    spriority = " [" + spriority + "]";
-  }
+    std::string sprogr1;
+    std::string sprogr2;
+    std::string color;
+    if (state == 0) {
+      color = "35";
+      sprogr1 = "Not Started ";
+    } else if (state == 1) {
+      color = "33";
+      sprogr1 = "In Progress ";
+      sprogr2 = "(" + std::to_string(progression) + "%) ";
+    } else {
+      color = "32";
+      std::string scl_dt (ctime(&closure_date));
+      sprogr1 = "Done ";
+      sprogr2 = "(" + scl_dt.substr(0,scl_dt.length()-1) + ") ";
+    }
+    std::string spriority (priority, '!');
+    if (priority == 0) {
+      spriority = "";
+    }
+    else {
+      spriority = "[" + spriority + "]";
+    }
   std::string space (size.ws_col - scr_dt.length() + 1
-      - sprogr.length() - spriority.length(), ' ');
-  std::cout << std::endl << scr_dt.substr(0,scr_dt.length()-1)
-    << space << sprogr << spriority << std::endl;
+      - sprogr1.length() - sprogr2.length() - spriority.length(), ' ');
+  std::cout << std::endl << scr_dt.substr(0,scr_dt.length()-1) << space
+    << "\033[1;" << color << "m" << sprogr1
+    << "\033[0;" << color << "m" << sprogr2
+    << "\033[1;31m" << spriority << "\033[0m" << std::endl;
   int nsep = (size.ws_col - 2 - title.length()) / 2;
   std::string sepL (nsep, '-');
   std::string sepR (nsep, '-');
   if ((size.ws_col - title.length())%2 == 1) {
     sepR = sepR + "-";
   }
-  std::cout << sepL << ' ' << title << ' ' <<  sepR << std::endl;
+  std::cout << "\033[1m" << sepL << ' ' << title << ' ' <<  sepR << "\033[0m" <<std::endl;
   if (description != "") {
     std::cout << description << std::endl << std::endl;
   }
@@ -261,8 +346,18 @@ void Task::print () {
       std::string cmt = std::get<0> (comment);
       time_t date = std::get<1> (comment);
       std::string sdate = ctime(&date);
-      std::cout << " - " << cmt << " (" << sdate.substr(0,sdate.length()-1)
-	<< ")" << std::endl;
+      std::string cmtview = cmt + " (" + sdate.substr(0,sdate.length()-1) + ")";
+      std::vector<std::string> split_cmtview = split_len(cmtview,
+	  size.ws_col - 3);
+      for (int i = 0; i < split_cmtview.size(); i++) {
+	if (i == 0) {
+	  std::cout << " - ";
+	}
+	else {
+	  std::cout << "   ";
+	}
+	std::cout << split_cmtview[i] << std::endl;
+      }
     }
     std::cout << std::endl;
   }

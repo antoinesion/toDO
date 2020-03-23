@@ -7,7 +7,7 @@ bool statefilter (Task* t) {
 void close_tasks (std::map<int, Task*>& id_to_ptr, int argc, char* argv []) {
 
   if (argc == 2) {
-    std::cerr << "/!\\ error: no id detected afer 'close'.";
+    std::cerr << "\033[1;31m/!\\ error:\033[0;31m no id detected afer 'close'.";
   }
   else {
     bool force = false;
@@ -20,7 +20,7 @@ void close_tasks (std::map<int, Task*>& id_to_ptr, int argc, char* argv []) {
     for (int i = start ; i < argc ; i++) {
       int id = std::stoi(argv[i]);
       if (id_to_ptr.find(id) == id_to_ptr.end()) {
-	std::cerr << "/!\\ error: no match for id '" << argv[i] << "'. " << std::endl;
+	std::cerr << "\033[1;31m/!\\ error:\033[0;31m no match for id '" << argv[i] << "'. " << std::endl;
       } else {
 	id_to_close.push_back(id);
       }
@@ -55,7 +55,7 @@ void close_tasks (std::map<int, Task*>& id_to_ptr, int argc, char* argv []) {
       if (choice == 'y') {
 	force = true;
       } else {
-	std::cout << "Action abort.";
+	std::cout << "\033[1;33m/!\\ warning:\033[0;33m action abort.";
       }
     }
 
@@ -64,7 +64,7 @@ void close_tasks (std::map<int, Task*>& id_to_ptr, int argc, char* argv []) {
       for (Task* tsk : tsk_to_close) {
 	nb_tasks_closed += tsk->close();
       }
-      std::cout << nb_tasks_closed << " task(s) closed.";
+      std::cout << "\033[1minfo:\033[0m " << nb_tasks_closed << " task(s) closed.";
     }
   }
 };

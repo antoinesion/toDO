@@ -9,21 +9,21 @@ bool create_task (Task* new_task, std::map<int, Task*>& id_to_ptr, int argc, cha
 
 
   bool error = false;
-  std::string title;
-  std::string description;
+  std::string title = "";
+  std::string description = "";
   int priority = 0;
   int subtask_of = 0;
   for (int i = 2 ; i < argc ; i += 2) {
     if (i+1 == argc) {
       if (!error) {
-	std::cerr << "/!\\ error: no value specified after '" << argv[i] << "'. ";
+	std::cerr << "\033[1;31m/!\\ error:\033[0;31m no value specified after '" << argv[i] << "'. ";
 	error = true;
       }
     }
     else if (std::strcmp(argv[i], "--title") == 0 || std::strcmp(argv[i], "-t") == 0) {
       title = argv[i+1];
       if (title.find("\n") != std::string::npos) {
-	std::cerr << "/!\\ error: no multi-lined title allowed. ";
+	std::cerr << "\033[1;31m/!\\ error:\033[0;31m no multi-lined title allowed. ";
 	error = true;
       }
     }
@@ -34,7 +34,7 @@ bool create_task (Task* new_task, std::map<int, Task*>& id_to_ptr, int argc, cha
       if (priority_map.find(argv[i+1]) != priority_map.end()) {
 	priority = priority_map[argv[i+1]];
       } else {
-	std::cerr << "/!\\ error: priority '" << argv[i+1] << "' unknowned.";
+	std::cerr << "\033[1;31m/!\\ error:\033[0;31m priority '" << argv[i+1] << "' unknown.";
 	error = true;
       }
     }
@@ -42,7 +42,7 @@ bool create_task (Task* new_task, std::map<int, Task*>& id_to_ptr, int argc, cha
       int subtask_id = std::stoi(argv[i+1]);
       if (id_to_ptr.find(subtask_id) == id_to_ptr.end()) {
 	if (!error) {
-	  std::cerr << "/!\\ error: no match for id '" << argv[i+1] << "'. ";
+	  std::cerr << "\033[1;31m/!\\ error:\033[0;31m no match for id '" << argv[i+1] << "'. ";
 	  error = true;
 	}
       } else {
@@ -50,23 +50,23 @@ bool create_task (Task* new_task, std::map<int, Task*>& id_to_ptr, int argc, cha
       }
     }
     else if (!error) {
-      std::cerr << "/!\\ error: no param named '" << argv[i] << "'. ";
+      std::cerr << "\033[1;31m/!\\ error:\033[0;31m no param named '" << argv[i] << "'. ";
       error = true;
     }
   }
   if (title == "") {
-      std::cerr << "/!\\ error: title of a task cannot be empty.";
+      std::cerr << "\033[1;31m/!\\ error:\033[0;31m title of a task cannot be empty.";
       error = true;
   }
   if (!error) {
     if (subtask_of > 0 && priority != 0) {
-      std::cout << "warning: a subtask cannot have a priority." << std::endl << std::endl;
+      std::cout << "\033[1;33mwarning:\033[0;33m a subtask cannot have a priority." << std::endl << std::endl;
     }
     new_task->set_title(title);
     new_task->set_description(description);
     new_task->set_priority(priority);
     new_task->set_subtask_of(subtask_of);
-    std::cout << "info: new task succesfully created (id:" << new_task->get_id () << ").";
+    std::cout << "\033[1minfo:\033[0m new task succesfully created (id:" << new_task->get_id () << ").";
     return true;
   }
   return false;
