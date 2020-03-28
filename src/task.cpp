@@ -215,14 +215,14 @@ int Task::quickview (int sub, std::function<bool(int)> statefilter, bool last_su
     std::string sprogr2;
     std::string color;
     if (state == 0) {
-      color = "35";
+      color = "38;5;55";
       sprogr1 = "Not Started ";
     } else if (state == 1) {
-      color = "33";
+      color = "38;5;220";
       sprogr1 = "In Progress ";
       sprogr2 = "(" + std::to_string(progression) + "%) ";
     } else {
-      color = "32";
+      color = "38;5;34";
       std::string scl_dt (ctime(&closure_date));
       sprogr1 = "Done ";
       sprogr2 = "(" + scl_dt.substr(0,scl_dt.length()-1) + ") ";
@@ -236,28 +236,28 @@ int Task::quickview (int sub, std::function<bool(int)> statefilter, bool last_su
     }
     std::string taskview = "(id:" + std::to_string(id) + ") " + title + ": ";
     int max_len = size.ws_col - pre_taskview.length() - 4;
-    std::vector<std::string> split_taskview = split_len(taskview, max_len);
+    std::vector<std::string> split_taskview = smart_split(taskview, max_len);
     if (split_taskview.back().length() + sprogr1.length() <= max_len) {
       if (split_taskview.back().length() + sprogr1.length() + sprogr2.length() <= max_len) {
-	if (split_taskview.back().length() + sprogr1.length() + sprogr2.length() 
+	if (split_taskview.back().length() + sprogr1.length() + sprogr2.length()
 	    + spriority.length() <= max_len) {
 	  split_taskview.back() += "\033[1;" + color + "m" + sprogr1
 	    + "\033[0;" + color + "m" + sprogr2
-	    + "\033[1;31m" + spriority + "\033[0m";
+	    + "\033[1;38;5;9m" + spriority + "\033[0m";
 	} else {
 	  split_taskview.back() += "\033[1;" + color + "m" + sprogr1
 	    + "\033[0;" + color + "m" + sprogr2 + "\033[0m";
-	  split_taskview.push_back("\033[1;31m" + spriority + "\033[0m");
+	  split_taskview.push_back("\033[1;38;5;9m" + spriority + "\033[0m");
 	}
       } else {
 	split_taskview.back() += "\033[1;" + color + "m" + sprogr1 + "\033[0m";
 	split_taskview.push_back("\033[0;" + color + "m" + sprogr2
-	  + "\033[1;31m" + spriority + "\033[0m");
+	  + "\033[1;38;5;9m" + spriority + "\033[0m");
       }
     } else {
       split_taskview.push_back("\033[1;" + color + "m" + sprogr1
 	+ "\033[0;" + color + "m" + sprogr2
-	+ "\033[1;31m" + spriority + "\033[0m");
+	+ "\033[1;38;5;9m" + spriority + "\033[0m");
     }
     for (int i = 0; i < split_taskview.size() ; i++) {
       std::cout << "  " + pre_taskview;
@@ -302,14 +302,14 @@ void Task::print () {
     std::string sprogr2;
     std::string color;
     if (state == 0) {
-      color = "35";
+      color = "38;5;55";
       sprogr1 = "Not Started ";
     } else if (state == 1) {
-      color = "33";
+      color = "38;5;220";
       sprogr1 = "In Progress ";
       sprogr2 = "(" + std::to_string(progression) + "%) ";
     } else {
-      color = "32";
+      color = "38;5;34";
       std::string scl_dt (ctime(&closure_date));
       sprogr1 = "Done ";
       sprogr2 = "(" + scl_dt.substr(0,scl_dt.length()-1) + ") ";
@@ -326,7 +326,7 @@ void Task::print () {
   std::cout << std::endl << scr_dt.substr(0,scr_dt.length()-1) << space
     << "\033[1;" << color << "m" << sprogr1
     << "\033[0;" << color << "m" << sprogr2
-    << "\033[1;31m" << spriority << "\033[0m" << std::endl;
+    << "\033[1;38;5;9m" << spriority << "\033[0m" << std::endl;
   int nsep = (size.ws_col - 2 - title.length()) / 2;
   std::string sepL (nsep, '-');
   std::string sepR (nsep, '-');
@@ -335,7 +335,11 @@ void Task::print () {
   }
   std::cout << "\033[1m" << sepL << ' ' << title << ' ' <<  sepR << "\033[0m" <<std::endl;
   if (description != "") {
-    std::cout << description << std::endl << std::endl;
+    std::vector<std::string> split_description = smart_split(description, size.ws_col);
+    for (int i = 0; i < split_description.size(); i++) {
+      std::cout << split_description[i] << std::endl;
+    }
+    std::cout << std::endl;
   }
   else {
     std::cout << "no description." << std::endl << std::endl;
@@ -347,7 +351,7 @@ void Task::print () {
       time_t date = std::get<1> (comment);
       std::string sdate = ctime(&date);
       std::string cmtview = cmt + " (" + sdate.substr(0,sdate.length()-1) + ")";
-      std::vector<std::string> split_cmtview = split_len(cmtview,
+      std::vector<std::string> split_cmtview = smart_split(cmtview,
 	  size.ws_col - 3);
       for (int i = 0; i < split_cmtview.size(); i++) {
 	if (i == 0) {

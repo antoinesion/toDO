@@ -1,6 +1,8 @@
 #include "../includes/list.hpp"
 
-void list_tasks (std::vector<Task*>& tasks, int argc, char* argv []) {
+void list_tasks (std::vector<Task*>& tasks_main, int argc, char* argv []) {
+
+  std::vector<Task*> tasks = tasks_main;
 
   std::map<std::string, std::function<bool(int)>> statefilter_map;
   std::function<bool(int)> statefilter = static_cast<bool(*)(int)> (statefilter_none);
@@ -22,7 +24,7 @@ void list_tasks (std::vector<Task*>& tasks, int argc, char* argv []) {
   for (int i = 2 ; i < argc ; i += 2) {
     if (i+1 == argc) {
       if (!error) {
-	std::cerr << "\033[1;31m/!\\ error:\033[0;31m no value specified after '" << argv[i] << "'. ";
+	std::cerr << "\033[1;38;5;9m/!\\ error:\033[0;38;5;9m no value specified after '" << argv[i] << "'. ";
 	error = true;
       }
     }
@@ -36,12 +38,12 @@ void list_tasks (std::vector<Task*>& tasks, int argc, char* argv []) {
 	      sort_function = taskcmp_priority_incr;
 	    }
 	  } else {
-	    std::cerr << "\033[1;31m/!\\ error:\033[0;31m cannot sort with value '" << arg << "'. ";
+	    std::cerr << "\033[1;38;5;9m/!\\ error:\033[0;38;5;9m cannot sort with value '" << arg << "'. ";
 	    error = true;
 	  }
 	}
 	else if (arg.length() > 9) {
-	    std::cerr << "\033[1;31m/!\\ error:\033[0;31m cannot sort with value '" << arg << "'. ";
+	    std::cerr << "\033[1;38;5;9m/!\\ error:\033[0;38;5;9m cannot sort with value '" << arg << "'. ";
 	    error = true;
 	}
       }
@@ -53,12 +55,12 @@ void list_tasks (std::vector<Task*>& tasks, int argc, char* argv []) {
 	      sort_function = taskcmp_date_decr;
 	    }
 	  } else {
-	    std::cerr << "\033[1;31m/!\\ error:\033[0;31m cannot sort with value '" << arg << "'. ";
+	    std::cerr << "\033[1;38;5;9m/!\\ error:\033[0;38;5;9m cannot sort with value '" << arg << "'. ";
 	    error = true;
 	  }
 	}
 	else if (arg.length() > 5) {
-	    std::cerr << "\033[1;31m/!\\ error:\033[0;31m cannot sort with value '" << arg << "'. ";
+	    std::cerr << "\033[1;38;5;9m/!\\ error:\033[0;38;5;9m cannot sort with value '" << arg << "'. ";
 	    error = true;
 	}
       }
@@ -79,7 +81,7 @@ void list_tasks (std::vector<Task*>& tasks, int argc, char* argv []) {
       } else if (arg.find("high") != std::string::npos) {
 	priority = 3;
       } else {
-	std::cerr << "\033[1;31m/!\\ error:\033[0;31m priority '" << argv[i+1] << "' unknown.";
+	std::cerr << "\033[1;38;5;9m/!\\ error:\033[0;38;5;9m priority '" << argv[i+1] << "' unknown.";
 	error = true;
       }
     }
@@ -87,12 +89,12 @@ void list_tasks (std::vector<Task*>& tasks, int argc, char* argv []) {
       if (statefilter_map.find(argv[i+1]) != statefilter_map.end()) {
 	statefilter = statefilter_map[argv[i+1]];
       } else {
-	std::cerr << "\033[1;31m/!\\ error:\033[0;31m state '" << argv[i+1] << "' unknown.";
+	std::cerr << "\033[1;38;5;9m/!\\ error:\033[0;38;5;9m state '" << argv[i+1] << "' unknown.";
 	error = true;
       }
     }
     else if (!error) {
-      std::cerr << "\033[1;31m/!\\ error:\033[0;31m no param named '" << argv[i] << "'. ";
+      std::cerr << "\033[1;38;5;9m/!\\ error:\033[0;38;5;9m no param named '" << argv[i] << "'. ";
       error = true;
     }
   }

@@ -3,7 +3,7 @@
 void delete_tasks (std::map<int, Task*>& id_to_ptr, int argc, char* argv []) {
 
   if (argc == 2) {
-    std::cerr << "\033[1;31m/!\\ error:\033[0;31m no id detected afer 'delete'.";
+    std::cerr << "\033[1;38;5;9m/!\\ error:\033[0;38;5;9m no id detected afer 'delete'.";
   }
   else {
     bool force = false;
@@ -16,7 +16,7 @@ void delete_tasks (std::map<int, Task*>& id_to_ptr, int argc, char* argv []) {
     for (int i = start ; i < argc ; i++) {
       int id = std::stoi(argv[i]);
       if (id_to_ptr.find(id) == id_to_ptr.end()) {
-	std::cerr << "\033[1;31m/!\\ error:\033[0;31m no match for id '" << argv[i] << "'. " << std::endl;
+	std::cerr << "\033[1;38;5;9m/!\\ error:\033[0;38;5;9m no match for id '" << argv[i] << "'. " << std::endl;
       } else {
 	id_to_delete.push_back(id);
       }
@@ -49,7 +49,7 @@ void delete_tasks (std::map<int, Task*>& id_to_ptr, int argc, char* argv []) {
       if (choice == 'y') {
 	force = true;
       } else {
-	std::cout << "\033[1;33mwarning:\033[0;33m action abort.";
+	std::cout << "\033[1;38;5;208mwarning:\033[0;38;5;208m action abort.";
       }
     }
 

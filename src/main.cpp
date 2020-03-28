@@ -8,6 +8,7 @@
 #include "../includes/edit.hpp"
 #include "../includes/progress.hpp"
 #include "../includes/move.hpp"
+#include "../includes/help.hpp"
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -41,14 +42,14 @@ int main (int argc, char* argv []) {
   /* --- READING TASKS --- */
   std::ifstream ifile (file_path);
   std::vector<Task*> tasks;
-  
+
   int next_id = 1;
   if (ifile) {
     /* readind 'next_id' */
     std::string snext_id;
     std::getline(ifile, snext_id);
     next_id = std::stoi(snext_id);
-    
+
     /* reading tasks */
     tasks = read_tasks (ifile);
   }
@@ -61,7 +62,7 @@ int main (int argc, char* argv []) {
   bool task_moved = false;
 
   if (argc < 2) {
-    std::cerr << "\033[1;31m/!\\ error:\033[1;31m no action passed in argument." << std::endl
+    std::cerr << "\033[1;38;5;9m/!\\ error:\033[1;38;5;9m no action passed in argument." << std::endl
       << "\033[1minfo:\033[0m use 'help' to ask for assistance.";
   }
   else {
@@ -76,7 +77,7 @@ int main (int argc, char* argv []) {
       list_tasks (tasks, argc, argv);
     }
     else if (std::strcmp(argv[1], "show") == 0) {
-      show_task (id_to_ptr, argc, argv); 
+      show_task (id_to_ptr, argc, argv);
     }
     else if (std::strcmp(argv[1], "close") == 0) {
       close_tasks (id_to_ptr, argc, argv);
@@ -97,10 +98,10 @@ int main (int argc, char* argv []) {
       task_moved = move_task (&task_to_move, &where_id, &positioning, id_to_ptr, argc, argv);
     }
     else if (std::strcmp(argv[1], "help") == 0) {
-
+      help ();
     } else {
-    std::cerr << "\033[1;31m/!\\ error:\033[1;31m action '" << argv[1] << "' unkown." << std::endl
-      << "\033[1minfo:\033[0m use action 'help' to ask for assistance.";
+    std::cerr << "\033[1;38;5;9m/!\\ error:\033[1;38;5;9m action '" << argv[1] << "' unkown.\033[0m" << std::endl;
+    std::cout << "\033[1minfo:\033[0m use action 'help' to ask for assistance.";
     }
   }
   std::cout << "\033[0m" << std::endl << std::endl;

@@ -1,23 +1,23 @@
 #include "../includes/progress.hpp"
 
 void progress_task (std::map<int, Task*>& id_to_ptr, int argc, char* argv []) {
-  
+
   if (argc == 2) {
-    std::cerr << "\033[1;31m/!\\ error:\033[0;31m no id detected afer 'progress'.";
+    std::cerr << "\033[1;38;5;9m/!\\ error:\033[0;38;5;9m no id detected afer 'progress'.";
   }
   else if (argc > 4) {
-    std::cerr << "\033[1;31m/!\\ error:\033[0;31m too many arguements after 'progress'.";
+    std::cerr << "\033[1;38;5;9m/!\\ error:\033[0;38;5;9m too many arguements after 'progress'.";
   }
   else {
     int id = std::stoi(argv[2]);
     if (id_to_ptr.find(id) == id_to_ptr.end()) {
-      std::cerr << "\033[1;31m/!\\ error:\033[0;31m no match for id '" << argv[2] << "'. ";
+      std::cerr << "\033[1;38;5;9m/!\\ error:\033[0;38;5;9m no match for id '" << argv[2] << "'. ";
     } else {
       if (id_to_ptr[id]->has_any_subtask ()) {
-	std::cerr << "\033[1;31m/!\\ error:\033[0;31m task (id:" << id << ") has subtask(s), therefore its progression is automatically set";
+	std::cerr << "\033[1;38;5;9m/!\\ error:\033[0;38;5;9m task (id:" << id << ") has subtask(s), therefore its progression is automatically set";
       }
       else if (argc == 3) {
-	std::cerr << "\033[1;31m/!\\ error:\033[0;31m no progression detected.";
+	std::cerr << "\033[1;38;5;9m/!\\ error:\033[0;38;5;9m no progression detected.";
       }
       else {
 	std::string sprogress (argv[3]);
@@ -28,7 +28,7 @@ void progress_task (std::map<int, Task*>& id_to_ptr, int argc, char* argv []) {
 	    std::cout << "\033[1minfo:\033[0m progression of task (id:" << id << ") succesfully upddated.";
 	  }
 	  else {
-	    std::cerr << "\033[1;31m/!\\ error:\033[0;31m progression number is a % (must be between 0 and 100).";
+	    std::cerr << "\033[1;38;5;9m/!\\ error:\033[0;38;5;9m progression number is a % (must be between 0 and 100).";
 	  }
 	}
 	else {
