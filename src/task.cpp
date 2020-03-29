@@ -172,6 +172,9 @@ int Task::close () {
     for (int subtask_id : subtasks_id) {
       nb_tasks_closed += (*id_to_ptr)[subtask_id]->close();
     }
+    if (subtask_of > 0) {
+      (*id_to_ptr)[subtask_of]->update_progression();
+    }
     return nb_tasks_closed;
   }
   return 0;
