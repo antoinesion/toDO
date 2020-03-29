@@ -3,6 +3,7 @@ The Command Line TO-DO list app
 
 #### Preview
 Here a preview of the main functionalities.
+
 ![toDO preview](media/toDO_preview.gif)
 
 #### Funtionalities
@@ -21,6 +22,9 @@ You can, among things,
 4. Then, use `make` command.
 5. Finally, type `./install ~/.your_shrc` replacing `.your_shrc` by your shell startup file such as *.bashrc*, *.bash_profile* or *.zshrc*.
 6. Restart your terminal and start creating tasks!
+
+#### Update
+It is very easy to update the app, you just have to type `./update` in the `toDO/` directory and press `ENTER`.
 
 ### Documentation
 In `docs/`directory, you can find:
