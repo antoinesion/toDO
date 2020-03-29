@@ -277,7 +277,7 @@ int Task::quickview (int sub, std::function<bool(int)> statefilter, bool last_su
     std::sort (subtasks.begin(), subtasks.end(), tasksort_default);
     for (int i = 0 ; i < n; i++) {
       if (!last_sub && sub > 0) {
-	nb_tasks += subtasks[i]->quickview(sub+1, statefilter, (i == n - 1), pre_taskview + "| ");
+	nb_tasks += subtasks[i]->quickview(sub+1, statefilter, (i == n - 1), pre_taskview + "│ ");
       } else {
 	nb_tasks += subtasks[i]->quickview(sub+1, statefilter, (i == n - 1), pre_taskview + "  ");
       }

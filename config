@@ -1,0 +1,2 @@
+#!/bin/sh
+echo "#include <string>\n\nconst std::string path_to_config_file = \"$(pwd)/etc/tasks.txt\";" > etc/config.hpp

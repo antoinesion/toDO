@@ -9,6 +9,7 @@
 #include "../includes/progress.hpp"
 #include "../includes/move.hpp"
 #include "../includes/help.hpp"
+#include "../etc/config.hpp"
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -36,11 +37,9 @@ std::vector<Task*> read_tasks (std::ifstream& file) {
   return tasks;
 };
 
-const std::string file_path = "../etc/tasks.txt";
-
 int main (int argc, char* argv []) {
   /* --- READING TASKS --- */
-  std::ifstream ifile (file_path);
+  std::ifstream ifile (path_to_config_file);
   std::vector<Task*> tasks;
 
   int next_id = 1;
@@ -107,7 +106,7 @@ int main (int argc, char* argv []) {
   std::cout << "\033[0m" << std::endl << std::endl;
 
   /* --- SAVING TASKS --- */
-  std::ofstream ofile (file_path);
+  std::ofstream ofile (path_to_config_file);
   ofile << next_id << std::endl;
   if (!task_moved) {
     for (Task* tsk : tasks) {

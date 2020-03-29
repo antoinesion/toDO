@@ -49,7 +49,7 @@ void delete_tasks (std::map<int, Task*>& id_to_ptr, int argc, char* argv []) {
       if (choice == 'y') {
 	force = true;
       } else {
-	std::cout << "\033[1;38;5;208mwarning:\033[0;38;5;208m action abort.";
+	std::cout << "\033[1;38;5;202mwarning:\033[0;38;5;202m action abort.";
       }
     }
 

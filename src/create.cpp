@@ -60,7 +60,7 @@ bool create_task (Task* new_task, std::map<int, Task*>& id_to_ptr, int argc, cha
   }
   if (!error) {
     if (subtask_of > 0 && priority != 0) {
-      std::cout << "\033[1;38;5;208mwarning:\033[0;38;5;208m a subtask cannot have a priority.\033[0m"
+      std::cout << "\033[1;38;5;202mwarning:\033[0;38;5;202m a subtask cannot have a priority.\033[0m"
         << std::endl << std::endl;
     }
     new_task->set_title(title);

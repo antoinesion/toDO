@@ -47,7 +47,7 @@ void edit_task (std::map<int, Task*>& id_to_ptr, int argc, char* argv []) {
 	}
 	else if (std::strcmp(argv[i], "--priority") == 0 || std::strcmp(argv[i], "-p") == 0) {
 	  if (id_to_ptr[id]->get_depth () > 0) {
-	    std::cerr << "\033[1;38;5;208mwarning:\033[0;38;5;208m a subtask cannot have a priority.\033[0m"
+	    std::cerr << "\033[1;38;5;202mwarning:\033[0;38;5;202m a subtask cannot have a priority.\033[0m"
             << std::endl;
 	  }
 	  else if (priority_map.find(argv[i+1]) != priority_map.end()) {
