@@ -31,7 +31,7 @@ void comment_task (std::map<int, Task*>& id_to_ptr, int argc, char* argv []) {
       }
       else if (std::strcmp(argv[3], "del") == 0) {
 	if (argc == 4) {
-	  std::cerr << "\033[1;38;5;9m/!\\ error:\033[0;38;5;9m no comment number detected.";
+	  std::cerr << "\033[1;38;5;9m/!\\ error:\033[0;38;5;9m no comment position detected.";
 	} else {
 	  int cmt_i = std::stoi(argv[4]);
 	  std::string cmt = id_to_ptr[id]->del_comment (cmt_i);

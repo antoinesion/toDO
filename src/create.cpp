@@ -3,6 +3,7 @@
 bool create_task (Task* new_task, std::map<int, Task*>& id_to_ptr, int argc, char* argv []) {
 
   std::map<std::string, int> priority_map;
+  priority_map["none"] = 0;
   priority_map["low"] = 1;
   priority_map["medium"] = 2;
   priority_map["high"] = 3;

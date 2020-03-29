@@ -52,6 +52,7 @@ void list_tasks (std::vector<Task*>& tasks_main, int argc, char* argv []) {
 	if (arg.length() == 5) {
 	  if (incr_map.find(arg[4]) != incr_map.end()) {
 	    if (!incr_map[arg[4]]) {
+	      std::cout << "jdjkdjj";
 	      sort_function = taskcmp_date_decr;
 	    }
 	  } else {
@@ -74,7 +75,9 @@ void list_tasks (std::vector<Task*>& tasks_main, int argc, char* argv []) {
       } else {
 	priority_cmp = '=';
       }
-      if (arg.find("low") != std::string::npos) {
+      if (arg.find("none") != std::string::npos) {
+	priority = 0;
+      } else if (arg.find("low") != std::string::npos) {
 	priority = 1;
       } else if (arg.find("medium") != std::string::npos) {
 	priority = 2;

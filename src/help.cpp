@@ -2,13 +2,13 @@
 
 void help () {
   std::cout << "\033[1mhelp:\033[0m" << std::endl;
-  std::cout << "  * create [-t|-d|-p|-sto] \033[38;5;240m-> create a new task\033[0m" << std::endl;
-  std::cout << "  * list [-p|-so] \033[38;5;240m-> list all the tasks created\033[0m" << std::endl;
+  std::cout << "  * create [-t|-d|-p|-sto] (values) \033[38;5;240m-> create a new task\033[0m" << std::endl;
+  std::cout << "  * list [-p|-so] (values) \033[38;5;240m-> list all the tasks created\033[0m" << std::endl;
   std::cout << "  * move (id) (above/under) (id) \033[38;5;240m-> move a task in the list\033[0m"
     << std::endl;
   std::cout << "  * show (id) \033[38;5;240m-> show a particular task\033[0m" << std::endl;
-  std::cout << "  * edit (id) [-t|-d|-p|-sto] \033[38;5;240m-> edit a task\033[0m" << std::endl;
-  std::cout << "  * comment (id) (new/del) \033[38;5;240m-> add a comment to a task\033[0m"
+  std::cout << "  * edit (id) [-t|-d|-p|-sto] (values) \033[38;5;240m-> edit a task\033[0m" << std::endl;
+  std::cout << "  * comment (id) (new/del) (comment) \033[38;5;240m-> add a comment to a task\033[0m"
     << std::endl;
   std::cout << "  * progress (id) [+|-](%) \033[38;5;240m-> change the progression of a task\033[0m"
     << std::endl;
