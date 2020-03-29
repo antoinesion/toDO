@@ -184,8 +184,8 @@ subtask(s):
 `comment (id) (new/del) (comment)` -> add a comment to a task
 
 ##### Explanation
-* To add a comment simply write `todo comment (id) new "your comment"` replacing `(id)` by the id of your task
-* To delete a comment simply write `todo comment (id) del (position)` replacing `(id)` by the id of the task and `(position)` by the position of the comment you want to delete (like 1, 2, 3, etc.)
+* To add a comment, simply write `todo comment (id) new "your comment"` replacing `(id)` by the id of your task
+* To delete a comment, simply write `todo comment (id) del (position)` replacing `(id)` by the id of the task and `(position)` by the position of the comment you want to delete (like 1, 2, 3, etc.)
 
 ##### Examples
 <pre>
@@ -228,7 +228,7 @@ subtask(s):
 > todo list
 <b>list:</b>
   - (id:3) Second project: <b><span style="color: #5F00af">Not Started</span> <span style="color: red;">[!]</span></b>
-  - (id:1) Project: <span style="color: #ffd700"><b>In Progress</b> (60%)</span> <b><span style="color: red;">[!!!]</span></b>
+  - (id:1) Project ALPHA: <span style="color: #ffd700"><b>In Progress</b> (60%)</span> <b><span style="color: red;">[!!!]</span></b>
     └ (id:2) First step: <span style="color: #ffd700"><b>In Progress</b> (60%)</span>
 3 task(s).
 
@@ -238,7 +238,7 @@ subtask(s):
 > todo list
 <b>list:</b>
   - (id:3) Second project: <b><span style="color: #5F00af">Not Started</span> <span style="color: red;">[!]</span></b>
-  - (id:1) Project: <span style="color: #ffd700"><b>In Progress</b> (40%)</span> <b><span style="color: red;">[!!!]</span></b>
+  - (id:1) Project ALPHA: <span style="color: #ffd700"><b>In Progress</b> (40%)</span> <b><span style="color: red;">[!!!]</span></b>
     └ (id:2) First step: <span style="color: #ffd700"><b>In Progress</b> (40%)</span>
 3 task(s).
 </pre>
@@ -261,7 +261,7 @@ Do you want to proceed ? [y/n] y
 > todo list
 <b>list:</b>
   - (id:3) Second project: <b><span style="color: #5F00af">Not Started</span> <span style="color: red;">[!]</span></b>
-  - (id:1) Project: <span style="color: #00af00"><b>Done</b> (Sun Mar 29 18:59:17 2020)</span> <b><span style="color: red;">[!!!]</span></b>
+  - (id:1) Project ALPHA: <span style="color: #00af00"><b>Done</b> (Sun Mar 29 18:59:17 2020)</span> <b><span style="color: red;">[!!!]</span></b>
     └ (id:2) First step: <span style="color: #00af00"><b>Done</b> (Sun Mar 29 18:59:17 2020)</span>
 3 task(s).
 </pre>
@@ -276,7 +276,7 @@ You can delete multiple tasks at one: `todo delete (id1) (id2) [...]`
 <pre>
 > todo delete 1
 It will delete the following tasks:
-  - (id:1) Project: <span style="color: #00af00"><b>Done</b> (Sun Mar 29 18:59:17 2020)</span> <b><span style="color: red;">[!!!]</span></b>
+  - (id:1) Project ALPHA: <span style="color: #00af00"><b>Done</b> (Sun Mar 29 18:59:17 2020)</span> <b><span style="color: red;">[!!!]</span></b>
     └ (id:2) First step: <span style="color: #00af00"><b>Done</b> (Sun Mar 29 18:59:17 2020)</span>
 Do you want to proceed ? [y/n] y
 

@@ -221,7 +221,7 @@ int Task::quickview (int sub, std::function<bool(int)> statefilter, bool last_su
       color = "38;5;55";
       sprogr1 = "Not Started ";
     } else if (state == 1) {
-      color = "38;5;220";
+      color = "38;5;214";
       sprogr1 = "In Progress ";
       sprogr2 = "(" + std::to_string(progression) + "%) ";
     } else {
@@ -308,7 +308,7 @@ void Task::print () {
       color = "38;5;55";
       sprogr1 = "Not Started ";
     } else if (state == 1) {
-      color = "38;5;220";
+      color = "38;5;214";
       sprogr1 = "In Progress ";
       sprogr2 = "(" + std::to_string(progression) + "%) ";
     } else {

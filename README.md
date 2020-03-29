@@ -1,16 +1,18 @@
 # toDO
 The Command Line TO-DO list app
 
-#### Preview
+**Warning: this app only works properly on UNIX-based systems.**
+
+### Preview
 Here a preview of the main functionalities.
 
 ![toDO preview](media/toDO_preview.gif)
 
-#### Funtionalities
+### Funtionalities
 You can, among things,
 * create tasks
 * add subtasks
-* list your tasks with filters and/or sorting ways
+* list your tasks with filters and/or sorting algorithms
 * add comments to your tasks
 * change the tasks progression
 * organize your tasks the way you want
