@@ -20,7 +20,7 @@ Progamming language: **C++(11)**
 #### Source and include files
 Each action is coded by an *include file* and a *source file*. For instance, `src/create.cpp` and `includes/create.hpp` are used by the `create` action.
 
-The main functionnalities called by these actions are however located in `src/task.cpp`. Here is the commented include file `includes/task.hpp` which reference all the functions.
+The main functionnalities called by these actions are however located in `src/task.cpp`. Here's the commented include file `includes/task.hpp` which reference all the functions.
 
 ```c++
 // ...
@@ -99,7 +99,9 @@ class Task {
 bool tasksort_default(Task* t1, Task* t2); // sort for the list action
 ```
 
-Finally, the `src/main.cpp` file achieve this 3 steps:
+Moreover, the file `src/task_utils.cpp` gives some filter and sorting functions, useful for `list` action.
+
+Finally, the `src/main.cpp` file achieve these 3 steps:
 * It reads all the backup file to build a vector of the tasks as well as the map `id_to_ptr` seen in `includes/task.hpp`
 * It deals with the user action by calling the right function (`create`, `list`, etc.)
 * It writes in the backup file to save the potential changes

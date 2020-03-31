@@ -1,3 +1,3 @@
 #!/bin/sh
 mkdir bin
-echo "#include <string>\n\nconst std::string path_to_config_file = \"$(pwd)/etc/tasks.txt\";" > etc/config.hpp
+echo "#include <string>\n\nconst std::string path_to_backup_file = \"$(pwd)/etc/tasks.txt\";" > etc/config.hpp

@@ -70,10 +70,10 @@ The values are:
 * `--sort` or `-so`<br/>
 Sort the tasks. *This is an optional parameter.*<br/>
 The possible values are:
-	* `priority` or `-priority` meaning "from the most important to the less important task"
-	* `+priority` meaning "from the less important to the most important task"
-	* `date` or `+date` meaning "from the oldest to the most recent task"
-	* `-date` meaning "from the most recent to the oldest task"
+	* `priority` or `priority-` meaning "from the most important to the less important task"
+	* `priority+` meaning "from the less important to the most important task"
+	* `date` or `date+` meaning "from the oldest to the most recent task"
+	* `date-` meaning "from the most recent to the oldest task"
 
 ##### Examples
 <pre>

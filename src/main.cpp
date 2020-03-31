@@ -39,7 +39,7 @@ std::vector<Task*> read_tasks (std::ifstream& file) {
 
 int main (int argc, char* argv []) {
   /* --- READING TASKS --- */
-  std::ifstream ifile (path_to_config_file);
+  std::ifstream ifile (path_to_backup_file);
   std::vector<Task*> tasks;
 
   int next_id = 1;
@@ -106,7 +106,7 @@ int main (int argc, char* argv []) {
   std::cout << "\033[0m" << std::endl << std::endl;
 
   /* --- SAVING TASKS --- */
-  std::ofstream ofile (path_to_config_file);
+  std::ofstream ofile (path_to_backup_file);
   ofile << next_id << std::endl;
   if (!task_moved) {
     for (Task* tsk : tasks) {

@@ -1,0 +1,53 @@
+# Here's a sample of test commands you can run with the executable file (1) or with the installed app (2)
+
+# -------------------- 1. with the executable file --------------------
+# IN THE bin/ directory (where the executable file is)
+
+./todo help
+./todo create -t "Cooking recipe" -d "Chocolate cake"
+./todo create -t "2nd Step" -d "In a salad bowl, add the sugar, the eggs, the flour. Mix" -sto 1
+./todo create -t "1st Step" -d "In a saucepan, melt the chocolate and the butter cut into pieces over very low heat." -sto 1
+./todo list
+./todo show 1
+./todo edit 1 +d "Preparation time: 40min"
+./todo show 1
+./todo move 3 above 2
+./todo list
+./todo comment 3 new "Do not overheat the butter"
+./todo show 3
+./todo close 3
+	Answer 'y' to the question
+./todo list
+./todo list -st not_started
+./todo create -t "Homework" -p high
+./todo list -p medium+
+./todo progress 4 75
+./todo list -so date-
+./todo delete 1
+	Answer 'y' to the question
+
+
+# -------------------- 2. with the installed app ----------------------
+
+todo help
+todo create -t "Cooking recipe" -d "Chocolate cake"
+todo create -t "2nd Step" -d "In a salad bowl, add the sugar, the eggs, the flour. Mix" -sto 1
+todo create -t "1st Step" -d "In a saucepan, melt the chocolate and the butter cut into pieces over very low heat." -sto 1
+todo list
+todo show 1
+todo edit 1 +d "Preparation time: 40min"
+todo show 1
+todo move 3 above 2
+todo list
+todo comment 3 new "Do not overheat the butter"
+todo show 3
+todo close 3
+	Answer 'y' to the question
+todo list
+todo list -st not_started
+todo create -t "Homework" -p high
+todo list -p medium+
+todo progress 4 75
+todo list -so date-
+todo delete 1
+	Answer 'y' to the question

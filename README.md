@@ -4,7 +4,7 @@ The Command Line TO-DO list app
 **Warning: this app only works properly on UNIX-based systems.**
 
 ### Preview
-Here a preview of the main functionalities.
+Here's a preview of the main functionalities.
 
 ![toDO preview](media/toDO_preview.gif)
 
@@ -28,9 +28,15 @@ You can, among things,
 #### Update
 It is very easy to update the app, you just have to type `./update` in the `toDO/` directory and press `ENTER`.
 
+### Usage
+```
+> todo (action) [...]
+```
+See the user documentation (`docs/DOC_USER.md`) for more information.
+
 ### Documentation
 In `docs/`directory, you can find:
 * `DOC_USER.md` to learn about how to use the app.
 * `DOC_DEV.md` to learn about how the app is coded.
 
-
+You can also see some examples of commands in `TESTS_SAMPLE.txt`.
