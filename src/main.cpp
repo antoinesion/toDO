@@ -99,7 +99,7 @@ int main (int argc, char* argv []) {
     else if (std::strcmp(argv[1], "help") == 0) {
       help ();
     } else {
-    std::cerr << "\033[1;38;5;9m/!\\ error:\033[1;38;5;9m action '" << argv[1] << "' unkown.\033[0m" << std::endl;
+    std::cerr << "\033[1;38;5;9m/!\\ error:\033[1;38;5;9m action '" << argv[1] << "' unknown.\033[0m" << std::endl;
     std::cout << "\033[1minfo:\033[0m use action 'help' to ask for assistance.";
     }
   }
