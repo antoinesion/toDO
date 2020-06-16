@@ -59,10 +59,12 @@ int Task::get_depth () {
 void Task::set_title(std::string& t) {
   remove_special_chars(&t);
   title = t;
+  title.find("//");
 }
 void Task::set_description(std::string& d) {
   remove_special_chars(&d);
   description = d;
+  description.find("//");
 }
 void Task::set_priority (int p) {priority = p;}
 void Task::set_subtask_of (int sto) {
