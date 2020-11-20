@@ -61,8 +61,8 @@ int main (int argc, char* argv []) {
   bool task_moved = false;
 
   if (argc < 2) {
-    std::cerr << "\033[1;38;5;9m/!\\ error:\033[1;38;5;9m no action passed in argument." << std::endl
-      << "\033[1minfo:\033[0m use 'help' to ask for assistance.";
+    std::cerr << "\033[1;38;5;9m/!\\ error:\033[1;38;5;9m no action passed in argument.\033[0m" << std::endl;
+    std::cout << "\033[1minfo:\033[0m use 'help' to ask for assistance.";
   }
   else {
     if (std::strcmp(argv[1], "create") == 0) {
